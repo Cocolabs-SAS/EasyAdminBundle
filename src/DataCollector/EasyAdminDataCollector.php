@@ -12,12 +12,14 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\DataCollector;
 
 use EasyCorp\Bundle\EasyAdminBundle\Configuration\ConfigManager;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Symfony\Component\Yaml\Yaml;
+use Throwable;
 
 /**
  * Collects information about the requests related to EasyAdmin and displays
@@ -27,7 +29,9 @@ use Symfony\Component\Yaml\Yaml;
  */
 class EasyAdminDataCollector extends DataCollector
 {
-    /** @var ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     private $configManager;
 
     public function __construct(ConfigManager $configManager)
@@ -41,50 +45,48 @@ class EasyAdminDataCollector extends DataCollector
      */
     public function reset()
     {
-        $this->data = array(
+        $this->data = [
             'num_entities' => 0,
             'request_parameters' => null,
             'current_entity_configuration' => null,
             'backend_configuration' => null,
-        );
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function collect(Request $request, Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response, Throwable $exception = null)
     {
         // 'admin' is the deprecated route name that will be removed in version 2.0.
-        if (!in_array($request->attributes->get('_route'), array('easyadmin', 'admin'))) {
+        if (!in_array($request->attributes->get('_route'), ['easyadmin', 'admin'])) {
             return;
         }
 
         $backendConfig = $this->configManager->getBackendConfig();
         $entityName = $request->query->get('entity', null);
-        $currentEntityConfig = array_key_exists($entityName, $backendConfig['entities']) ? $backendConfig['entities'][$entityName] : array();
+        $currentEntityConfig = array_key_exists($entityName, $backendConfig['entities']) ? $backendConfig['entities'][$entityName] : [];
 
-        $this->data = array(
+        $this->data = [
             'num_entities' => count($backendConfig['entities']),
             'request_parameters' => $this->getEasyAdminParameters($request),
             'current_entity_configuration' => $currentEntityConfig,
             'backend_configuration' => $backendConfig,
-        );
+        ];
     }
 
     /**
-     * @param Request $request
-     *
      * @return array|null
      */
     private function getEasyAdminParameters(Request $request)
     {
-        return array(
+        return [
             'action' => $request->query->get('action'),
             'entity' => $request->query->get('entity'),
             'id' => $request->query->get('id'),
             'sort_field' => $request->query->get('sortField'),
             'sort_direction' => $request->query->get('sortDirection'),
-        );
+        ];
     }
 
     /**
@@ -161,5 +163,3 @@ class EasyAdminDataCollector extends DataCollector
         return 'easyadmin';
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\DataCollector\EasyAdminDataCollector', 'JavierEguiluz\Bundle\EasyAdminBundle\DataCollector\EasyAdminDataCollector', false);

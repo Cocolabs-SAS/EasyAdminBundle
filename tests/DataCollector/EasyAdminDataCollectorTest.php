@@ -15,11 +15,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
 
 class EasyAdminDataCollectorTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->initClient(array('environment' => 'default_backend'));
+        $this->initClient(['environment' => 'default_backend']);
     }
 
     public function testCollectorIsEnabled()
@@ -38,13 +38,13 @@ class EasyAdminDataCollectorTest extends AbstractTestCase
 
         $this->assertSame(5, $collector->getNumEntities());
 
-        $parameters = array(
+        $parameters = [
             'action' => 'list',
             'entity' => 'Category',
             'id' => null,
             'sort_field' => 'id',
             'sort_direction' => 'DESC',
-        );
+        ];
         $this->assertSame($parameters, $collector->getRequestParameters());
 
         $currentConfiguration = $collector->getCurrentEntityConfig();
@@ -62,13 +62,13 @@ class EasyAdminDataCollectorTest extends AbstractTestCase
 
         $this->assertSame(5, $collector->getNumEntities());
 
-        $parameters = array(
+        $parameters = [
             'action' => 'edit',
             'entity' => 'Category',
             'id' => '200',
             'sort_field' => 'id',
             'sort_direction' => 'DESC',
-        );
+        ];
         $this->assertSame($parameters, $collector->getRequestParameters());
 
         $currentConfiguration = $collector->getCurrentEntityConfig();

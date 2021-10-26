@@ -12,6 +12,8 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\DependencyInjection;
 
 use EasyCorp\Bundle\EasyAdminBundle\Form\Util\LegacyFormHelper;
+use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -62,21 +64,19 @@ class EasyAdminExtension extends Extension
     /**
      * Makes some tweaks in order to ensure backward compatibilities
      * with supported versions of Symfony components.
-     *
-     * @param ContainerBuilder $container
      */
     private function ensureBackwardCompatibility(ContainerBuilder $container)
     {
         // BC for Symfony 2.3 and Request Stack
         $isRequestStackAvailable = class_exists('Symfony\\Component\\HttpFoundation\\RequestStack');
         if (!$isRequestStackAvailable) {
-            $needsSetRequestMethodCall = array('easyadmin.listener.request_post_initialize', 'easyadmin.form.type.extension');
+            $needsSetRequestMethodCall = ['easyadmin.listener.request_post_initialize', 'easyadmin.form.type.extension'];
             foreach ($needsSetRequestMethodCall as $serviceId) {
                 $container
                     ->getDefinition($serviceId)
-                    ->addMethodCall('setRequest', array(
+                    ->addMethodCall('setRequest', [
                         new Reference('request', ContainerInterface::NULL_ON_INVALID_REFERENCE, false),
-                    ))
+                    ])
                 ;
             }
         }
@@ -96,17 +96,15 @@ class EasyAdminExtension extends Extension
      * Without this, Symfony doesn't merge correctly the 'entities' config key
      * defined in different files.
      *
-     * @param array $configs
-     *
      * @return array
      */
     private function processConfigFiles(array $configs)
     {
-        $existingEntityNames = array();
+        $existingEntityNames = [];
 
         foreach ($configs as $i => $config) {
             if (array_key_exists('entities', $config)) {
-                $processedConfig = array();
+                $processedConfig = [];
 
                 foreach ($config['entities'] as $key => $value) {
                     $entityConfig = $this->normalizeEntityConfig($key, $value);
@@ -161,12 +159,12 @@ class EasyAdminExtension extends Extension
     {
         // normalize config formats #1 and #2 to use the 'class' option as config format #3
         if (!is_array($entityConfig)) {
-            $entityConfig = array('class' => $entityConfig);
+            $entityConfig = ['class' => $entityConfig];
         }
 
         // if config format #3 is used, ensure that it defines the 'class' option
         if (!isset($entityConfig['class'])) {
-            throw new \RuntimeException(sprintf('The "%s" entity must define its associated Doctrine entity class using the "class" option.', $entityName));
+            throw new RuntimeException(sprintf('The "%s" entity must define its associated Doctrine entity class using the "class" option.', $entityName));
         }
 
         return $entityConfig;
@@ -183,8 +181,6 @@ class EasyAdminExtension extends Extension
      * guaranteed to be unique.
      *
      * @param string $entityName
-     * @param array  $entityConfig
-     * @param array  $existingEntityNames
      *
      * @return string The entity name transformed to be unique
      */
@@ -207,7 +203,7 @@ class EasyAdminExtension extends Extension
         // make sure that the entity name is valid as a PHP method name
         // (this is required to allow extending the backend with a custom controller)
         if (!$this->isValidMethodName($entityName)) {
-            throw new \InvalidArgumentException(sprintf('The name of the "%s" entity contains invalid characters (allowed: letters, numbers, underscores; the first character cannot be a number).', $entityName));
+            throw new InvalidArgumentException(sprintf('The name of the "%s" entity contains invalid characters (allowed: letters, numbers, underscores; the first character cannot be a number).', $entityName));
         }
 
         return $entityName;
@@ -225,5 +221,3 @@ class EasyAdminExtension extends Extension
         return 0 !== preg_match('/^-?[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name);
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\DependencyInjection\EasyAdminExtension', 'JavierEguiluz\Bundle\EasyAdminBundle\DependencyInjection\EasyAdminExtension', false);

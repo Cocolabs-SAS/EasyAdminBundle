@@ -15,11 +15,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
 
 class AdvancedFormLayoutTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->initClient(array('environment' => 'advanced_form_layout'));
+        $this->initClient(['environment' => 'advanced_form_layout']);
     }
 
     /**
@@ -32,10 +32,10 @@ class AdvancedFormLayoutTest extends AbstractTestCase
     public function testFormLayout()
     {
         // a dataProvider can't be used because it can't create the Crawlers
-        foreach (array('edit', 'new') as $view) {
+        foreach (['edit', 'new'] as $view) {
             $queryParams = array_merge(
-                array('action' => $view, 'entity' => 'Product'),
-                'edit' === $view ? array('id' => 1) : array()
+                ['action' => $view, 'entity' => 'Product'],
+                'edit' === $view ? ['id' => 1] : []
             );
             $crawler = $this->getBackendPage($queryParams);
 
@@ -44,7 +44,7 @@ class AdvancedFormLayoutTest extends AbstractTestCase
                 trim($crawler->filter('ul.nav-tabs li')->eq(0)->text()),
                 'The first tab of the form is displayed correctly.'
             );
-            $this->assertContains(
+            $this->assertSame(
                 'fa fa-pencil',
                 $crawler->filter('ul.nav-tabs li')->eq(0)->filter('i')->attr('class'),
                 'The first tab displays the configured icon.'

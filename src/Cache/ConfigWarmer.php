@@ -12,6 +12,7 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Cache;
 
 use EasyCorp\Bundle\EasyAdminBundle\Configuration\ConfigManager;
+use PDOException;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 /**
@@ -20,7 +21,9 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
  */
 class ConfigWarmer implements CacheWarmerInterface
 {
-    /** @var ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     private $configManager;
 
     public function __construct(ConfigManager $configManager)
@@ -36,7 +39,7 @@ class ConfigWarmer implements CacheWarmerInterface
         try {
             // this forces the full processing of the backend configuration
             $this->configManager->getBackendConfig();
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             // this occurs for example when the database doesn't exist yet and the
             // project is being installed ('composer install' clears the cache at the end)
             // ignore this error at this point and display an error message later
@@ -51,5 +54,3 @@ class ConfigWarmer implements CacheWarmerInterface
         return false;
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Cache\ConfigWarmer', 'JavierEguiluz\Bundle\EasyAdminBundle\Cache\ConfigWarmer', false);

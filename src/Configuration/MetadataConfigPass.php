@@ -11,8 +11,10 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Configuration;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
+use ReflectionException;
+use RuntimeException;
 use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
 
 /**
@@ -23,7 +25,9 @@ use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
  */
 class MetadataConfigPass implements ConfigPassInterface
 {
-    /** @var ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     private $doctrine;
 
     public function __construct(ManagerRegistry $doctrine)
@@ -36,7 +40,7 @@ class MetadataConfigPass implements ConfigPassInterface
         foreach ($backendConfig['entities'] as $entityName => $entityConfig) {
             try {
                 $em = $this->doctrine->getManagerForClass($entityConfig['class']);
-            } catch (\ReflectionException $e) {
+            } catch (ReflectionException $e) {
                 throw new InvalidTypeException(sprintf('The configured class "%s" for the path "easy_admin.entities.%s" does not exist. Did you forget to create the entity class or to define its namespace?', $entityConfig['class'], $entityName));
             }
 
@@ -66,10 +70,10 @@ class MetadataConfigPass implements ConfigPassInterface
      */
     private function processEntityPropertiesMetadata(ClassMetadata $entityMetadata)
     {
-        $entityPropertiesMetadata = array();
+        $entityPropertiesMetadata = [];
 
         if ($entityMetadata->isIdentifierComposite) {
-            throw new \RuntimeException(sprintf("The '%s' entity isn't valid because it contains a composite primary key.", $entityMetadata->name));
+            throw new RuntimeException(sprintf("The '%s' entity isn't valid because it contains a composite primary key.", $entityMetadata->name));
         }
 
         // introspect regular entity fields
@@ -79,10 +83,10 @@ class MetadataConfigPass implements ConfigPassInterface
 
         // introspect fields for entity associations
         foreach ($entityMetadata->associationMappings as $fieldName => $associationMetadata) {
-            $entityPropertiesMetadata[$fieldName] = array_merge($associationMetadata, array(
+            $entityPropertiesMetadata[$fieldName] = array_merge($associationMetadata, [
                 'type' => 'association',
                 'associationType' => $associationMetadata['type'],
-            ));
+            ]);
 
             // associations different from *-to-one cannot be sorted
             if ($associationMetadata['type'] & ClassMetadata::TO_MANY) {
@@ -93,5 +97,3 @@ class MetadataConfigPass implements ConfigPassInterface
         return $entityPropertiesMetadata;
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Configuration\MetadataConfigPass', 'JavierEguiluz\Bundle\EasyAdminBundle\Configuration\MetadataConfigPass', false);

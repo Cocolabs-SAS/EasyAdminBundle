@@ -13,16 +13,18 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Tests\EventListener;
 
 use EasyCorp\Bundle\EasyAdminBundle\EventListener\ExceptionListener;
 use EasyCorp\Bundle\EasyAdminBundle\Exception\EntityNotFoundException as EasyEntityNotFoundException;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Twig\Environment;
 
 class ExceptionListenerTest extends TestCase
 {
     private function getTwig()
     {
-        $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
+        $twig = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
         $twig->method('render')->willReturn('template content');
 
         return $twig;
@@ -43,15 +45,15 @@ class ExceptionListenerTest extends TestCase
 
     public function testCatchBaseExceptions()
     {
-        $exception = new EasyEntityNotFoundException(array(
+        $exception = new EasyEntityNotFoundException([
             'entity_name' => 'Test',
             'entity_id_name' => 'Test key',
             'entity_id_value' => 2,
-        ));
+        ]);
         $event = $this->getEventExceptionThatShouldBeCalledOnce($exception);
         $twig = $this->getTwig();
 
-        $listener = new ExceptionListener($twig, array(), 'easyadmin.listener.exception:showExceptionPageAction');
+        $listener = new ExceptionListener($twig, [], 'easyadmin.listener.exception:showExceptionPageAction');
         $listener->onKernelException($event);
     }
 
@@ -73,12 +75,12 @@ class ExceptionListenerTest extends TestCase
         $event = $this->getEventExceptionThatShouldNotBeCalled($exception);
         $twig = $this->getTwig();
 
-        $listener = new ExceptionListener($twig, array(), 'easyadmin.listener.exception:showExceptionPageAction');
+        $listener = new ExceptionListener($twig, [], 'easyadmin.listener.exception:showExceptionPageAction');
         $listener->onKernelException($event);
     }
 }
 
-class EntityNotFoundException extends \Exception
+class EntityNotFoundException extends Exception
 {
 }
 

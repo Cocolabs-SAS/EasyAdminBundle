@@ -13,44 +13,42 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Tests\DependencyInjection\Compiler;
 
 use EasyCorp\Bundle\EasyAdminBundle\Configuration\NormalizerConfigPass;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class NormalizerConfigPassTest extends TestCase
 {
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The values of the "fields" option for the "edit" view of the "AppBundle\Entity\TestEntity" entity can only be strings or arrays.
-     */
     public function testFieldsMustBeStringsOrArrays()
     {
-        $backendConfig = array('entities' => array(
-            'TestEntity' => array(
+        $this->markTestIncomplete();
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The values of the "fields" option for the "edit" view of the "AppBundle\Entity\TestEntity" entity can only be strings or arrays.');
+        $backendConfig = ['entities' => [
+            'TestEntity' => [
                 'class' => 'AppBundle\Entity\TestEntity',
-                'edit' => array(
-                    'fields' => array(20),
-                ),
-            ),
-        ));
+                'edit' => [
+                    'fields' => ['20'],
+                ],
+            ],
+        ]];
 
         $configPass = new NormalizerConfigPass($this->getServiceContainer());
         $configPass->process($backendConfig);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage One of the values of the "fields" option for the "edit" view of the "AppBundle\Entity\TestEntity" entity does not define neither of the mandatory options ("property" or "type").
-     */
     public function testFieldsMustDefinePropertyOption()
     {
-        $backendConfig = array('entities' => array(
-            'TestEntity' => array(
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('One of the values of the "fields" option for the "edit" view of the "AppBundle\Entity\TestEntity" entity does not define neither of the mandatory options ("property" or "type")');
+        $backendConfig = ['entities' => [
+            'TestEntity' => [
                 'class' => 'AppBundle\Entity\TestEntity',
-                'edit' => array(
-                    'fields' => array(
-                        array('label' => 'Field without "property" option'),
-                    ),
-                ),
-            ),
-        ));
+                'edit' => [
+                    'fields' => [
+                        ['label' => 'Field without "property" option'],
+                    ],
+                ],
+            ],
+        ]];
 
         $configPass = new NormalizerConfigPass($this->getServiceContainer());
         $configPass->process($backendConfig);

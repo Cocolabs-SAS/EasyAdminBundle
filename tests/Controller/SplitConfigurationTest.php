@@ -17,10 +17,10 @@ class SplitConfigurationTest extends AbstractTestCase
 {
     public function testConfigurationInDifferentFiles()
     {
-        $this->initClient(array('environment' => 'split_configuration'));
+        $this->initClient(['environment' => 'split_configuration']);
         $backendConfig = $this->client->getContainer()->get('easyadmin.config.manager')->getBackendConfig();
 
-        $this->assertSame(array('Category', 'Product'), array_keys($backendConfig['entities']));
+        $this->assertSame(['Category', 'Product'], array_keys($backendConfig['entities']));
 
         $this->assertSame('Categories', $backendConfig['entities']['Category']['label']);
 
@@ -43,6 +43,6 @@ class SplitConfigurationTest extends AbstractTestCase
             );
         }
 
-        $this->initClient(array('environment' => 'split_configuration_error'));
+        $this->initClient(['environment' => 'split_configuration_error']);
     }
 }

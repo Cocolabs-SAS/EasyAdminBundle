@@ -11,6 +11,7 @@
 namespace AppTestBundle\Entity\FunctionalTests;
 
 use AppTestBundle\Model\Shipment;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -41,7 +42,7 @@ class Purchase
     /**
      * The date of the delivery (it doesn't include the time).
      *
-     * @var \DateTime
+     * @var DateTime
      * @ORM\Column(type="date")
      */
     protected $deliveryDate = null;
@@ -49,7 +50,7 @@ class Purchase
     /**
      * The purchase datetime in the customer timezone.
      *
-     * @var \DateTime
+     * @var DateTime
      * @ORM\Column(type="datetimetz")
      */
     protected $createdAt = null;
@@ -65,7 +66,7 @@ class Purchase
     /**
      * The customer preferred time of the day for the delivery.
      *
-     * @var \DateTime|null
+     * @var DateTime|null
      * @ORM\Column(type="time", nullable=true)
      */
     protected $deliveryHour = null;
@@ -76,7 +77,7 @@ class Purchase
      * @var array
      * @ORM\Column(type="json_array")
      */
-    protected $billingAddress = array();
+    protected $billingAddress = [];
 
     /**
      * The user who made the purchase.
@@ -102,9 +103,9 @@ class Purchase
     {
         $this->id = $this->generateId();
         $this->purchasedItems = new ArrayCollection();
-        $this->createdAt = new \DateTime();
-        $this->deliveryDate = new \DateTime('+2 days');
-        $this->deliveryHour = new \DateTime('14:00');
+        $this->createdAt = new DateTime();
+        $this->deliveryDate = new DateTime('+2 days');
+        $this->deliveryHour = new DateTime('14:00');
     }
 
     /**
@@ -142,7 +143,7 @@ class Purchase
     }
 
     /**
-     * @param \DateTime $deliveryDate
+     * @param DateTime $deliveryDate
      */
     public function setDeliveryDate($deliveryDate)
     {
@@ -150,7 +151,7 @@ class Purchase
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getDeliveryDate()
     {
@@ -174,7 +175,7 @@ class Purchase
     }
 
     /**
-     * @param \DateTime $deliveryHour
+     * @param DateTime $deliveryHour
      */
     public function setDeliveryHour($deliveryHour)
     {
@@ -182,7 +183,7 @@ class Purchase
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
     public function getDeliveryHour()
     {
@@ -190,7 +191,7 @@ class Purchase
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      */
     public function setCreatedAt($createdAt)
     {
@@ -198,7 +199,7 @@ class Purchase
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt()
     {

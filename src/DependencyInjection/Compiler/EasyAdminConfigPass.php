@@ -29,7 +29,7 @@ final class EasyAdminConfigPass implements CompilerPassInterface
         $definition = $container->getDefinition('easyadmin.config.manager');
 
         foreach ($configPasses as $service) {
-            $definition->addMethodCall('addConfigPass', array($service));
+            $definition->addMethodCall('addConfigPass', [$service]);
         }
     }
 
@@ -38,14 +38,13 @@ final class EasyAdminConfigPass implements CompilerPassInterface
      * To be replaced by the usage of the \Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait
      * when 5.3 support is dropped.
      *
-     * @param                  $tagName
-     * @param ContainerBuilder $container
+     * @param $tagName
      *
      * @return array
      */
     private function findAndSortTaggedServices($tagName, ContainerBuilder $container)
     {
-        $services = array();
+        $services = [];
 
         foreach ($container->findTaggedServiceIds($tagName, true) as $serviceId => $attributes) {
             $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
@@ -60,5 +59,3 @@ final class EasyAdminConfigPass implements CompilerPassInterface
         return $services;
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\DependencyInjection\Compiler\EasyAdminConfigPass', 'JavierEguiluz\Bundle\EasyAdminBundle\DependencyInjection\Compiler\EasyAdminConfigPass', false);

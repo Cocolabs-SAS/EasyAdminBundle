@@ -18,12 +18,16 @@ use Pagerfanta\Pagerfanta;
  */
 class Finder
 {
-    const MAX_RESULTS = 15;
+    public const MAX_RESULTS = 15;
 
-    /** @var QueryBuilder */
+    /**
+     * @var QueryBuilder
+     */
     private $queryBuilder;
 
-    /** @var Paginator */
+    /**
+     * @var Paginator
+     */
     private $paginator;
 
     public function __construct(QueryBuilder $queryBuilder, Paginator $paginator)
@@ -33,7 +37,6 @@ class Finder
     }
 
     /**
-     * @param array  $entityConfig
      * @param string $searchQuery
      * @param int    $page
      * @param int    $maxResults
@@ -49,5 +52,3 @@ class Finder
         return $this->paginator->createOrmPaginator($queryBuilder, $page, $maxResults);
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Search\Finder', 'JavierEguiluz\Bundle\EasyAdminBundle\Search\Finder', false);

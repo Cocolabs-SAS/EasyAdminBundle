@@ -11,6 +11,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Internationalization;
 
+use DOMDocument;
 use PHPUnit\Framework\TestCase;
 
 class InternationalizationTest extends TestCase
@@ -19,7 +20,7 @@ class InternationalizationTest extends TestCase
     {
         $xlfFiles = glob(__DIR__.'/../../src/Resources/translations/*.*.xlf');
         foreach ($xlfFiles as $xlfFilePath) {
-            $document = new \DOMDocument();
+            $document = new DOMDocument();
             $document->load($xlfFilePath);
             $isValid = @$document->schemaValidateSource($this->getSchemaContents());
 

@@ -12,8 +12,10 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Router;
 
 use AppTestBundle\Entity\FunctionalTests\Product;
+use EasyCorp\Bundle\EasyAdminBundle\Exception\UndefinedEntityException;
 use EasyCorp\Bundle\EasyAdminBundle\Router\EasyAdminRouter;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
+use ReflectionClass;
 
 /**
  * @author Konstantin Grachev <me@grachevko.ru>
@@ -25,11 +27,11 @@ final class EasyAdminRouterTest extends AbstractTestCase
      */
     private $router;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->initClient(array('environment' => 'default_backend'));
+        $this->initClient(['environment' => 'default_backend']);
 
         $this->router = $this->client->getContainer()->get('easyadmin.router');
     }
@@ -37,47 +39,46 @@ final class EasyAdminRouterTest extends AbstractTestCase
     /**
      * @dataProvider provideEntities
      */
-    public function testUrlGeneration($entity, $action, $expectEntity, array $parameters = array(), array $expectParameters = array())
+    public function testUrlGeneration($entity, $action, $expectEntity, array $parameters = [], array $expectParameters = [])
     {
         $url = $this->router->generate($entity, $action, $parameters);
 
-        $this->assertContains('entity='.$expectEntity, $url);
-        $this->assertContains('action='.$action, $url);
+        $this->assertStringContainsString('entity='.$expectEntity, $url);
+        $this->assertStringContainsString('action='.$action, $url);
 
         foreach (array_merge($parameters, $expectParameters) as $key => $value) {
-            $this->assertContains($key.'='.$value, $url);
+            $this->assertStringContainsString($key.'='.$value, $url);
         }
     }
 
     /**
      * @dataProvider provideUndefinedEntities
-     *
-     * @expectedException \EasyCorp\Bundle\EasyAdminBundle\Exception\UndefinedEntityException
      */
     public function testUndefinedEntityException($entity, $action)
     {
+        $this->expectException(UndefinedEntityException::class);
         $this->router->generate($entity, $action);
     }
 
     public function provideEntities()
     {
         $product = new Product();
-        $ref = new \ReflectionClass($product);
+        $ref = new ReflectionClass($product);
         $refPropertyId = $ref->getProperty('id');
         $refPropertyId->setAccessible(true);
         $refPropertyId->setValue($product, 1);
 
-        return array(
-            array('AppTestBundle\Entity\FunctionalTests\Category', 'new', 'Category'),
-            array('Product', 'new', 'Product', array('entity' => 'Category'), array('entity' => 'Product')),
-            array($product, 'show', 'Product', array('modal' => 1), array('id' => 1)),
-        );
+        return [
+            ['AppTestBundle\Entity\FunctionalTests\Category', 'new', 'Category'],
+            ['Product', 'new', 'Product', ['entity' => 'Category'], ['entity' => 'Product']],
+            [$product, 'show', 'Product', ['modal' => 1], ['id' => 1]],
+        ];
     }
 
     public function provideUndefinedEntities()
     {
-        return array(
-            array('ThisEntityDoesNotExist', 'new'),
-        );
+        return [
+            ['ThisEntityDoesNotExist', 'new'],
+        ];
     }
 }

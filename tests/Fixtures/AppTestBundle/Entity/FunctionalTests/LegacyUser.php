@@ -2,6 +2,7 @@
 
 namespace AppTestBundle\Entity\FunctionalTests;
 
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -41,21 +42,21 @@ class LegacyUser
     private $purchases;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface
      *
      * @ORM\Column(name="createdAtDateTimeImmutable", type="datetime")
      */
     private $createdAtDateTimeImmutable;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface
      *
      * @ORM\Column(name="createdAtDateImmutable", type="date")
      */
     private $createdAtDateImmutable;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface
      *
      * @ORM\Column(name="createdAtTimeImmutable", type="time")
      */
@@ -125,7 +126,7 @@ class LegacyUser
     }
 
     /**
-     * @param \DateTimeInterface $createdAt
+     * @param DateTimeInterface $createdAt
      */
     public function setCreatedAtDateTimeImmutable($createdAt)
     {
@@ -133,7 +134,7 @@ class LegacyUser
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
     public function getCreatedAtDateTimeImmutable()
     {
@@ -141,7 +142,7 @@ class LegacyUser
     }
 
     /**
-     * @param \DateTimeInterface $createdAt
+     * @param DateTimeInterface $createdAt
      */
     public function setCreatedAtDateImmutable($createdAt)
     {
@@ -149,7 +150,7 @@ class LegacyUser
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
     public function getCreatedAtDateImmutable()
     {
@@ -157,7 +158,7 @@ class LegacyUser
     }
 
     /**
-     * @param \DateTimeInterface $createdAt
+     * @param DateTimeInterface $createdAt
      */
     public function setCreatedAtTimeImmutable($createdAt)
     {
@@ -165,7 +166,7 @@ class LegacyUser
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
     public function getCreatedAtTimeImmutable()
     {

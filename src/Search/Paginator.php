@@ -22,7 +22,7 @@ use Pagerfanta\Pagerfanta;
  */
 class Paginator
 {
-    const MAX_ITEMS = 15;
+    public const MAX_ITEMS = 15;
 
     /**
      * Creates a Doctrine ORM paginator for the given query builder.
@@ -48,5 +48,3 @@ class Paginator
         return $paginator;
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Search\Paginator', 'JavierEguiluz\Bundle\EasyAdminBundle\Search\Paginator', false);

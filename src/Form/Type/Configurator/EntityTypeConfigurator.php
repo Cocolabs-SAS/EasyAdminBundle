@@ -51,7 +51,7 @@ class EntityTypeConfigurator implements TypeConfiguratorInterface
      */
     public function supports($type, array $options, array $metadata)
     {
-        $isEntityType = in_array($type, array('entity', 'Symfony\Bridge\Doctrine\Form\Type\EntityType'), true);
+        $isEntityType = in_array($type, ['entity', 'Symfony\Bridge\Doctrine\Form\Type\EntityType'], true);
 
         return $isEntityType && 'association' === $metadata['dataType'];
     }
@@ -71,5 +71,3 @@ class EntityTypeConfigurator implements TypeConfiguratorInterface
             : 'empty_value';
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Form\Type\Configurator\EntityTypeConfigurator', 'JavierEguiluz\Bundle\EasyAdminBundle\Form\Type\Configurator\EntityTypeConfigurator', false);

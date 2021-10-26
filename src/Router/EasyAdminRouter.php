@@ -11,7 +11,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Router;
 
-use Doctrine\Common\Persistence\Proxy;
+use Doctrine\Persistence\Proxy;
 use EasyCorp\Bundle\EasyAdminBundle\Configuration\ConfigManager;
 use EasyCorp\Bundle\EasyAdminBundle\Exception\UndefinedEntityException;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,15 +24,25 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 final class EasyAdminRouter
 {
-    /** @var ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     private $configManager;
-    /** @var UrlGeneratorInterface */
+    /**
+     * @var UrlGeneratorInterface
+     */
     private $urlGenerator;
-    /** @var PropertyAccessorInterface */
+    /**
+     * @var PropertyAccessorInterface
+     */
     private $propertyAccessor;
-    /** @var RequestStack */
+    /**
+     * @var RequestStack
+     */
     private $requestStack;
-    /** @var Request */
+    /**
+     * @var Request
+     */
     private $request;
 
     public function __construct(ConfigManager $configManager, UrlGeneratorInterface $urlGenerator, PropertyAccessorInterface $propertyAccessor, RequestStack $requestStack = null)
@@ -46,13 +56,12 @@ final class EasyAdminRouter
     /**
      * @param object|string $entity
      * @param string        $action
-     * @param array         $parameters
      *
      * @throws UndefinedEntityException
      *
      * @return string
      */
-    public function generate($entity, $action, array $parameters = array())
+    public function generate($entity, $action, array $parameters = [])
     {
         if (is_object($entity)) {
             $config = $this->getEntityConfigByClass(get_class($entity));
@@ -76,7 +85,7 @@ final class EasyAdminRouter
         } elseif (
             $request
             && !is_string($referer)
-            && (true === $referer || in_array($action, array('new', 'edit', 'delete'), true))
+            && (true === $referer || in_array($action, ['new', 'edit', 'delete'], true))
         ) {
             $parameters['referer'] = urlencode($request->getUri());
         }
@@ -87,8 +96,6 @@ final class EasyAdminRouter
     /**
      * BC for SF < 2.4.
      * To be replaced by the usage of the request stack when 2.3 support is dropped.
-     *
-     * @param Request|null $request
      */
     public function setRequest(Request $request = null)
     {
@@ -117,7 +124,7 @@ final class EasyAdminRouter
     private function getEntityConfigByClass($class)
     {
         if (!$config = $this->configManager->getEntityConfigByClass($this->getRealClass($class))) {
-            throw new UndefinedEntityException(array('entity_name' => $class));
+            throw new UndefinedEntityException(['entity_name' => $class]);
         }
 
         return $config;
@@ -137,5 +144,3 @@ final class EasyAdminRouter
         return substr($class, $pos + Proxy::MARKER_LENGTH + 2);
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Router\EasyAdminRouter', 'JavierEguiluz\Bundle\EasyAdminBundle\Router\EasyAdminRouter', false);

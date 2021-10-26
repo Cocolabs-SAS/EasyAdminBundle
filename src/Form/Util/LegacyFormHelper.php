@@ -20,7 +20,7 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Form\Util;
  */
 final class LegacyFormHelper
 {
-    private static $supportedTypes = array(
+    private static $supportedTypes = [
         // Symfony's built-in types
         'birthday' => 'Symfony\\Component\\Form\\Extension\\Core\\Type\\BirthdayType',
         'button' => 'Symfony\\Component\\Form\\Extension\\Core\\Type\\ButtonType',
@@ -69,7 +69,7 @@ final class LegacyFormHelper
         'fos_ckeditor' => 'FOS\\CKEditorBundle\\Form\\Type\\CKEditorType',
         'vich_file' => 'Vich\\UploaderBundle\\Form\\Type\\VichFileType',
         'vich_image' => 'Vich\\UploaderBundle\\Form\\Type\\VichImageType',
-    );
+    ];
 
     /**
      * It returns the FQCN of the given short type name if not use legacy form
@@ -116,5 +116,3 @@ final class LegacyFormHelper
         return false === class_exists('Symfony\\Component\\Form\\Util\\StringUtil');
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Form\Util\LegacyFormHelper', 'JavierEguiluz\Bundle\EasyAdminBundle\Form\Util\LegacyFormHelper', false);

@@ -26,15 +26,16 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class EasyAdminExtension extends AbstractTypeExtension
 {
-    /** @var Request|null */
+    /**
+     * @var Request|null
+     */
     private $request;
 
-    /** @var RequestStack|null */
+    /**
+     * @var RequestStack|null
+     */
     private $requestStack;
 
-    /**
-     * @param RequestStack|null $requestStack
-     */
     public function __construct(RequestStack $requestStack = null)
     {
         $this->requestStack = $requestStack;
@@ -57,15 +58,15 @@ class EasyAdminExtension extends AbstractTypeExtension
             $easyadmin = $this->request->attributes->get('easyadmin');
             $entity = $easyadmin['entity'];
             $action = $easyadmin['view'];
-            $fields = isset($entity[$action]['fields']) ? $entity[$action]['fields'] : array();
-            $view->vars['easyadmin'] = array(
+            $fields = isset($entity[$action]['fields']) ? $entity[$action]['fields'] : [];
+            $view->vars['easyadmin'] = [
                 'entity' => $entity,
                 'view' => $action,
                 'item' => $easyadmin['item'],
                 'field' => null,
                 'form_group' => $form->getConfig()->getAttribute('easyadmin_form_group'),
                 'form_tab' => $form->getConfig()->getAttribute('easyadmin_form_tab'),
-            );
+            ];
 
             /*
              * Checks if current form view is direct child on the topmost form
@@ -80,8 +81,6 @@ class EasyAdminExtension extends AbstractTypeExtension
     /**
      * BC for SF < 2.4.
      * To be replaced by the usage of the request stack when 2.3 support is dropped.
-     *
-     * @param Request|null $request
      */
     public function setRequest(Request $request = null)
     {
@@ -99,11 +98,9 @@ class EasyAdminExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public static function getExtendedTypes()
+    public static function getExtendedTypes(): iterable
     {
         // needed to avoid a deprecation when using Symfony 4.2
-        return array(LegacyFormHelper::getType('form'));
+        return [LegacyFormHelper::getType('form')];
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Form\Extension\EasyAdminExtension', 'JavierEguiluz\Bundle\EasyAdminBundle\Form\Extension\EasyAdminExtension', false);

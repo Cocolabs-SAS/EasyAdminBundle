@@ -4,9 +4,11 @@ namespace AppTestBundle\DataFixtures\ORM;
 
 use AppTestBundle\Entity\FunctionalTests\Purchase;
 use AppTestBundle\Entity\FunctionalTests\PurchaseItem;
+use DateTime;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
+use StdClass;
 
 class LoadPurchases extends AbstractFixture implements OrderedFixtureInterface
 {
@@ -20,14 +22,14 @@ class LoadPurchases extends AbstractFixture implements OrderedFixtureInterface
         foreach (range(1, 30) as $i) {
             $purchase = new Purchase();
             $purchase->setGuid($this->generateGuid());
-            $purchase->setDeliveryDate(new \DateTime("+$i days"));
-            $purchase->setCreatedAt(new \DateTime("now +$i seconds"));
-            $purchase->setShipping(new \StdClass());
+            $purchase->setDeliveryDate(new DateTime("+$i days"));
+            $purchase->setCreatedAt(new DateTime("now +$i seconds"));
+            $purchase->setShipping(new StdClass());
             $purchase->setDeliveryHour($this->getHour($i));
-            $purchase->setBillingAddress(json_encode(array(
+            $purchase->setBillingAddress(json_encode([
                 'line1' => '1234 Main Street',
                 'line2' => 'Big City, XX 23456',
-            )));
+            ]));
             $purchase->setBuyer($this->getReference('user-'.($i % 20 + 1)));
 
             $this->addReference('purchase-'.$i, $purchase);
@@ -52,17 +54,17 @@ class LoadPurchases extends AbstractFixture implements OrderedFixtureInterface
     private function generateGuid()
     {
         return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-          mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-          mt_rand(0, 0xffff),
-          mt_rand(0, 0x0fff) | 0x4000,
-          mt_rand(0, 0x3fff) | 0x8000,
-          mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+          mt_rand(0, 0xFFFF), mt_rand(0, 0xFFFF),
+          mt_rand(0, 0xFFFF),
+          mt_rand(0, 0x0FFF) | 0x4000,
+          mt_rand(0, 0x3FFF) | 0x8000,
+          mt_rand(0, 0xFFFF), mt_rand(0, 0xFFFF), mt_rand(0, 0xFFFF)
         );
     }
 
     private function getHour($i)
     {
-        $date = new \DateTime();
+        $date = new DateTime();
 
         return $date->setTime($i % 24, 0);
     }

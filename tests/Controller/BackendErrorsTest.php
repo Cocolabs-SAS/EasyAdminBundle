@@ -15,21 +15,21 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
 
 class BackendErrorsTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->initClient(array('environment' => 'default_backend'));
+        $this->initClient(['environment' => 'default_backend']);
     }
 
     public function testUndefinedEntityError()
     {
-        $crawler = $this->getBackendPage(array(
+        $crawler = $this->getBackendPage([
             'entity' => 'InexistentEntity',
             'view' => 'list',
-        ));
+        ]);
 
         $this->assertSame(404, $this->client->getResponse()->getStatusCode());
-        $this->assertContains('The "InexistentEntity" entity is not defined in the configuration of your backend.', $crawler->filter('head title')->text());
+        $this->assertStringContainsString('The "InexistentEntity" entity is not defined in the configuration of your backend.', $crawler->filter('head title')->text());
     }
 }
