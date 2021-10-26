@@ -24,7 +24,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Form\Util\LegacyFormHelper;
 use Exception;
 use Pagerfanta\Pagerfanta;
 use RuntimeException;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilder;
@@ -43,7 +43,7 @@ use UnexpectedValueException;
  *
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
-class AdminController extends Controller
+class AdminController extends AbstractController
 {
     /**
      * @var array The full configuration of the entire backend

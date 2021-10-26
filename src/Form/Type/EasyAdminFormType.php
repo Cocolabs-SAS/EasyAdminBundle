@@ -23,7 +23,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Custom form type that deals with some of the logic used to render the
@@ -164,12 +163,6 @@ class EasyAdminFormType extends AbstractType
             // BC for Symfony < 2.6
             $resolver->setNormalizers(['attr' => $this->getAttributesNormalizer()]);
         }
-    }
-
-    // BC for SF < 2.7
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $this->configureOptions($resolver);
     }
 
     /**

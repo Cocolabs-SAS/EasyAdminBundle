@@ -17,6 +17,7 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Twig\Environment;
 
@@ -32,7 +33,7 @@ class ExceptionListenerTest extends TestCase
 
     private function getEventExceptionThatShouldBeCalledOnce($exception)
     {
-        $event = $this->getMockBuilder('Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent')
+        $event = $this->getMockBuilder(ExceptionEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
         $event->method('getException')->willReturn($exception);
@@ -59,7 +60,7 @@ class ExceptionListenerTest extends TestCase
 
     private function getEventExceptionThatShouldNotBeCalled($exception)
     {
-        $event = $this->getMockBuilder('Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent')
+        $event = $this->getMockBuilder(ExceptionEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
         $event->method('getException')->willReturn($exception);

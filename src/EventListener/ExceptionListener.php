@@ -13,16 +13,12 @@ namespace EasyCorp\Bundle\EasyAdminBundle\EventListener;
 
 use EasyCorp\Bundle\EasyAdminBundle\Exception\BaseException;
 use EasyCorp\Bundle\EasyAdminBundle\Exception\FlattenException;
-use Exception;
 use Psr\Log\LoggerInterface;
-use ReflectionProperty;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-use Symfony\Component\HttpKernel\EventListener\ExceptionListener as BaseExceptionListener;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\EventListener\ErrorListener;
+use Throwable;
 use Twig\Environment;
 
 /**
@@ -32,7 +28,7 @@ use Twig\Environment;
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-class ExceptionListener extends BaseExceptionListener
+class ExceptionListener extends ErrorListener
 {
     /**
      * @var Environment
@@ -54,21 +50,16 @@ class ExceptionListener extends BaseExceptionListener
         parent::__construct($controller, $logger);
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event, string $eventName = null, EventDispatcherInterface $eventDispatcher = null)
     {
-        $exception = $event->getException();
-        $this->currentEntityName = $event->getRequest()->query->get('entity', null);
+        $exception = $event->getThrowable();
+        $this->currentEntityName = $event->getRequest()->query->get('entity');
 
         if (!$exception instanceof BaseException) {
             return;
         }
 
-        if (!$this->isLegacySymfony()) {
-            parent::onKernelException($event);
-        } else {
-            $response = $this->legacyOnKernelException($event);
-            $event->setResponse($response);
-        }
+        parent::onKernelException($event);
     }
 
     /**
@@ -80,28 +71,29 @@ class ExceptionListener extends BaseExceptionListener
             ? $this->easyAdminConfig['entities'][$this->currentEntityName] : null;
         $exceptionTemplatePath = isset($entityConfig['templates']['exception'])
             ? $entityConfig['templates']['exception']
-            : isset($this->easyAdminConfig['design']['templates']['exception'])
-                ? $this->easyAdminConfig['design']['templates']['exception']
-                : '@EasyAdmin/default/exception.html.twig';
+            : (
+                isset($this->easyAdminConfig['design']['templates']['exception'])
+                    ? $this->easyAdminConfig['design']['templates']['exception']
+                    : '@EasyAdmin/default/exception.html.twig'
+            );
         $exceptionLayoutTemplatePath = isset($entityConfig['templates']['layout'])
             ? $entityConfig['templates']['layout']
-            : isset($this->easyAdminConfig['design']['templates']['layout'])
-                ? $this->easyAdminConfig['design']['templates']['layout']
-                : '@EasyAdmin/default/layout.html.twig';
+            : (
+                isset($this->easyAdminConfig['design']['templates']['layout'])
+                    ? $this->easyAdminConfig['design']['templates']['layout']
+                    : '@EasyAdmin/default/layout.html.twig'
+            );
 
-        return Response::create($this->twig->render($exceptionTemplatePath, [
+        return new Response($this->twig->render($exceptionTemplatePath, [
             'exception' => $exception,
             'layout_template_path' => $exceptionLayoutTemplatePath,
         ]), $exception->getStatusCode());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function logException(Exception $exception, $message, $original = true)
+    protected function logException(Throwable $exception, string $message): void
     {
         if (!$exception instanceof BaseException) {
-            parent::logException($exception, $message, $original);
+            parent::logException($exception, $message);
 
             return;
         }
@@ -113,87 +105,5 @@ class ExceptionListener extends BaseExceptionListener
                 $this->logger->error($message, ['exception' => $exception]);
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function duplicateRequest(Exception $exception, Request $request)
-    {
-        if (!$this->isLegacySymfony()) {
-            $request = parent::duplicateRequest($exception, $request);
-        } else {
-            $request = $this->legacyDuplicateRequest($request);
-        }
-
-        $request->attributes->set('exception', FlattenException::create($exception));
-
-        return $request;
-    }
-
-    /**
-     * Utility method needed for BC reasons with Symfony 2.3
-     * Code copied from Symfony\Component\HttpKernel\EventListener\ExceptionListener
-     *
-     * @return Response
-     *
-     * @throws Exception
-     */
-    private function legacyOnKernelException(GetResponseForExceptionEvent $event)
-    {
-        $exception = $event->getException();
-
-        $this->logException($exception, sprintf('Uncaught PHP Exception %s: "%s" at %s line %s', get_class($exception), $exception->getMessage(), $exception->getFile(), $exception->getLine()));
-
-        $request = $this->duplicateRequest($exception, $event->getRequest());
-
-        try {
-            return $event->getKernel()->handle($request, HttpKernelInterface::SUB_REQUEST, false);
-        } catch (Exception $e) {
-            $this->logException($e, sprintf('Exception thrown when handling an exception (%s: %s at %s line %s)', get_class($e), $e->getMessage(), $e->getFile(), $e->getLine()));
-
-            $wrapper = $e;
-
-            while ($prev = $wrapper->getPrevious()) {
-                if ($exception === $wrapper = $prev) {
-                    throw $e;
-                }
-            }
-
-            $prev = new ReflectionProperty('Exception', 'previous');
-            $prev->setAccessible(true);
-            $prev->setValue($wrapper, $exception);
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Utility method needed for BC reasons with Symfony 2.3
-     * Code copied from Symfony\Component\HttpKernel\EventListener\ExceptionListener.
-     *
-     * @return Request
-     */
-    private function legacyDuplicateRequest(Request $request)
-    {
-        $attributes = [
-            '_controller' => $this->controller,
-            'logger' => $this->logger instanceof DebugLoggerInterface ? $this->logger : null,
-            'format' => $request->getRequestFormat(),
-        ];
-        $request = $request->duplicate(null, null, $attributes);
-        $request->setMethod('GET');
-
-        return $request;
-    }
-
-    /**
-     * Returns true if Symfony version is considered legacy (e.g. 2.3)
-     *
-     * @return bool
-     */
-    private function isLegacySymfony()
-    {
-        return 2 === Kernel::MAJOR_VERSION && 3 === Kernel::MINOR_VERSION;
     }
 }

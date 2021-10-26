@@ -12,7 +12,6 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\DataCollector;
 
 use EasyCorp\Bundle\EasyAdminBundle\Configuration\ConfigManager;
-use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
