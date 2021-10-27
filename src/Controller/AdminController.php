@@ -125,7 +125,7 @@ class AdminController extends AbstractController
             $request->query->set('sortDirection', $sortDirection);
         }
 
-        $this->em = $this->getDoctrine()->getManagerForClass($this->entity['class']);
+        $this->em = $this->get('doctrine')->getManagerForClass($this->entity['class']);
         $this->request = $request;
 
         $this->dispatch(EasyAdminEvents::POST_INITIALIZE);
@@ -628,7 +628,7 @@ class AdminController extends AbstractController
      *
      * @param object $entity
      *
-     * @return Form
+     * @return FormInterface
      */
     protected function createEditForm($entity, array $entityProperties)
     {
@@ -640,7 +640,7 @@ class AdminController extends AbstractController
      *
      * @param object $entity
      *
-     * @return Form
+     * @return FormInterface
      */
     protected function createNewForm($entity, array $entityProperties)
     {
