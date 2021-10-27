@@ -24,7 +24,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Form\Util\LegacyFormHelper;
 use Exception;
 use Pagerfanta\Pagerfanta;
 use RuntimeException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilder;
