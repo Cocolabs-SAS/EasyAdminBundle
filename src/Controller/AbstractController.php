@@ -10,7 +10,6 @@ use LogicException;
 use SplFileInfo;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -43,11 +42,7 @@ class AbstractController implements ContainerAwareInterface
      */
     protected function getParameter(string $name)
     {
-        if (!$this->container->has('parameter_bag')) {
-            throw new ServiceNotFoundException('parameter_bag.', null, null, [], sprintf('The "%s::getParameter()" method is missing a parameter bag to work properly. Did you forget to register your controller as a service subscriber? This can be fixed either by using autoconfiguration or by manually wiring a "parameter_bag" in the service locator passed to the controller.', static::class));
-        }
-
-        return $this->container->get('parameter_bag')->get($name);
+        return $this->container->getParameter($name);
     }
 
     /**
