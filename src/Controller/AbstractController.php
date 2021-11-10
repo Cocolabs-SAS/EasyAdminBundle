@@ -140,7 +140,7 @@ class AbstractController implements ContainerAwareInterface
     protected function addFlash(string $type, $message): void
     {
         try {
-            $this->container->get('request_stack')->getSession()->getFlashBag()->add($type, $message);
+            $this->container->get('session')->getFlashBag()->add($type, $message);
         } catch (SessionNotFoundException $e) {
             throw new LogicException('You can not use the addFlash method if sessions are disabled. Enable them in "config/packages/framework.yaml".', 0, $e);
         }
