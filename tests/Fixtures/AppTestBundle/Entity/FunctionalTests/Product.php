@@ -10,6 +10,7 @@
 
 namespace AppTestBundle\Entity\FunctionalTests;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -33,7 +34,7 @@ class Product
     /**
      * The creation date of the product.
      *
-     * @var \DateTime
+     * @var DateTime
      * @ORM\Column(type="datetime", name="created_at")
      */
     protected $createdAt;
@@ -44,7 +45,7 @@ class Product
      * @var string[]
      * @ORM\Column(type="simple_array")
      */
-    protected $tags = array();
+    protected $tags = [];
 
     /**
      * The EAN 13 of the product. (type set to string in PHP due to 32 bit limitation).
@@ -73,7 +74,7 @@ class Product
      * @var array
      * @ORM\Column(type="array")
      */
-    protected $features = array();
+    protected $features = [];
 
     /**
      * Features of the product as a formatted HTML content.
@@ -136,7 +137,7 @@ class Product
     public function __construct()
     {
         $this->categories = new ArrayCollection();
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
     }
 
     /**
@@ -386,7 +387,7 @@ class Product
     /**
      * Get the date when the product have been created.
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt()
     {

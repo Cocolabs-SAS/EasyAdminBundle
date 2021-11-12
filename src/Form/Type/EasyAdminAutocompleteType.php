@@ -13,13 +13,13 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Form\Type;
 
 use EasyCorp\Bundle\EasyAdminBundle\Configuration\ConfigManager;
 use EasyCorp\Bundle\EasyAdminBundle\Form\EventListener\EasyAdminAutocompleteSubscriber;
+use InvalidArgumentException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Autocomplete form type.
@@ -51,7 +51,7 @@ class EasyAdminAutocompleteType extends AbstractType implements DataMapperInterf
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if (null === $config = $this->configManager->getEntityConfigByClass($options['class'])) {
-            throw new \InvalidArgumentException(sprintf('The configuration of the "%s" entity is not available (this entity is used as the target of the "%s" autocomplete field).', $options['class'], $form->getName()));
+            throw new InvalidArgumentException(sprintf('The configuration of the "%s" entity is not available (this entity is used as the target of the "%s" autocomplete field).', $options['class'], $form->getName()));
         }
 
         $view->vars['autocomplete_entity_name'] = $config['name'];
@@ -71,19 +71,13 @@ class EasyAdminAutocompleteType extends AbstractType implements DataMapperInterf
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'multiple' => false,
             // force display errors on this form field
             'error_bubbling' => false,
-        ));
+        ]);
 
-        $resolver->setRequired(array('class'));
-    }
-
-    // BC for SF < 2.7
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $this->configureOptions($resolver);
+        $resolver->setRequired(['class']);
     }
 
     /**
@@ -120,5 +114,3 @@ class EasyAdminAutocompleteType extends AbstractType implements DataMapperInterf
         $data = $form->getData();
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Form\Type\EasyAdminAutocompleteType', 'JavierEguiluz\Bundle\EasyAdminBundle\Form\Type\EasyAdminAutocompleteType', false);

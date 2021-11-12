@@ -11,6 +11,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures;
 
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -22,18 +23,27 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 abstract class AbstractTestCase extends WebTestCase
 {
-    /** @var Client */
+    /**
+     * @var Client
+     */
     protected $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->initDatabase();
     }
 
-    protected function initClient(array $options = array())
+    protected function initClient(array $options = []): void
     {
         $this->client = static::createClient($options);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->client = null;
+        static::ensureKernelShutdown();
+        parent::tearDown();
     }
 
     /**
@@ -48,15 +58,13 @@ abstract class AbstractTestCase extends WebTestCase
         $targetDbPath = $buildDir.'/test.db';
 
         if (!file_exists($originalDbPath)) {
-            throw new \RuntimeException(sprintf("The fixtures file used for the tests (%s) doesn't exist. This means that the execution of the bootstrap.php script that generates that file failed. Open %s/bootstrap.php and replace `NullOutput as ConsoleOutput` by `ConsoleOutput` to see the actual errors in the console.", $originalDbPath, realpath(__DIR__.'/..')));
+            throw new RuntimeException(sprintf("The fixtures file used for the tests (%s) doesn't exist. This means that the execution of the bootstrap.php script that generates that file failed. Open %s/bootstrap.php and replace `NullOutput as ConsoleOutput` by `ConsoleOutput` to see the actual errors in the console.", $originalDbPath, realpath(__DIR__.'/..')));
         }
 
         copy($originalDbPath, $targetDbPath);
     }
 
     /**
-     * @param array $queryParameters
-     *
      * @return Crawler
      */
     protected function getBackendPage(array $queryParameters)
@@ -69,7 +77,7 @@ abstract class AbstractTestCase extends WebTestCase
      */
     protected function getBackendHomepage()
     {
-        return $this->getBackendPage(array('entity' => 'Category', 'view' => 'list'));
+        return $this->getBackendPage(['entity' => 'Category', 'view' => 'list']);
     }
 
     /**
@@ -77,11 +85,11 @@ abstract class AbstractTestCase extends WebTestCase
      */
     protected function requestListView($entityName = 'Category')
     {
-        return $this->getBackendPage(array(
+        return $this->getBackendPage([
             'action' => 'list',
             'entity' => $entityName,
             'view' => 'list',
-        ));
+        ]);
     }
 
     /**
@@ -89,11 +97,11 @@ abstract class AbstractTestCase extends WebTestCase
      */
     protected function requestShowView($entityName = 'Category', $entityId = 200)
     {
-        return $this->getBackendPage(array(
+        return $this->getBackendPage([
             'action' => 'show',
             'entity' => $entityName,
             'id' => $entityId,
-        ));
+        ]);
     }
 
     /**
@@ -101,11 +109,11 @@ abstract class AbstractTestCase extends WebTestCase
      */
     protected function requestSearchView($searchQuery = 'cat', $entityName = 'Category')
     {
-        return $this->getBackendPage(array(
+        return $this->getBackendPage([
             'action' => 'search',
             'entity' => $entityName,
             'query' => $searchQuery,
-        ));
+        ]);
     }
 
     /**
@@ -113,10 +121,10 @@ abstract class AbstractTestCase extends WebTestCase
      */
     protected function requestNewView($entityName = 'Category')
     {
-        return $this->getBackendPage(array(
+        return $this->getBackendPage([
             'action' => 'new',
             'entity' => $entityName,
-        ));
+        ]);
     }
 
     /**
@@ -124,10 +132,10 @@ abstract class AbstractTestCase extends WebTestCase
      */
     protected function requestEditView($entityName = 'Category', $entityId = '200')
     {
-        return $this->getBackendPage(array(
+        return $this->getBackendPage([
             'action' => 'edit',
             'entity' => $entityName,
             'id' => $entityId,
-        ));
+        ]);
     }
 }

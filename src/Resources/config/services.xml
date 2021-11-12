@@ -4,6 +4,13 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <service id="easyadmin.controller.admin_controller" class="\EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController" autowire="true" autoconfigure="true" public="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+            <tag name="controller.service_arguments" />
+        </service>
+
         <service id="easyadmin.cache.manager" class="EasyCorp\Bundle\EasyAdminBundle\Cache\CacheManager" public="true">
             <argument>%easyadmin.cache.dir%</argument>
         </service>

@@ -15,11 +15,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
 
 class CustomEntityControllerAsServiceTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->initClient(array('environment' => 'custom_entity_controller_service'));
+        $this->initClient(['environment' => 'custom_entity_controller_service']);
     }
 
     public function testListAction()
@@ -30,7 +30,7 @@ class CustomEntityControllerAsServiceTest extends AbstractTestCase
             $this->markTestSkipped('This test is skipped because @request_stack service is not available.');
         }
 
-        $this->assertContains('Overridden list action as a service.', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Overridden list action as a service.', $this->client->getResponse()->getContent());
     }
 
     public function testShowAction()
@@ -41,6 +41,6 @@ class CustomEntityControllerAsServiceTest extends AbstractTestCase
             $this->markTestSkipped('This test is skipped because @request_stack service is not available.');
         }
 
-        $this->assertContains('Overridden show action as a service.', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Overridden show action as a service.', $this->client->getResponse()->getContent());
     }
 }

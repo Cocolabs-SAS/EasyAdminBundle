@@ -18,12 +18,11 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class BaseException extends HttpException
 {
-    /** @var ExceptionContext */
+    /**
+     * @var ExceptionContext
+     */
     private $context;
 
-    /**
-     * @param ExceptionContext $context
-     */
     public function __construct(ExceptionContext $context)
     {
         $this->context = $context;
@@ -70,5 +69,3 @@ class BaseException extends HttpException
         return $this->context->getStatusCode();
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Exception\BaseException', 'JavierEguiluz\Bundle\EasyAdminBundle\Exception\BaseException', false);

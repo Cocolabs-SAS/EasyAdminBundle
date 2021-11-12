@@ -21,17 +21,23 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class DesignConfigPass implements ConfigPassInterface
 {
-    /** @var ContainerInterface */
+    /**
+     * @var ContainerInterface
+     */
     private $container;
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $kernelDebug;
-    /** @var string */
+    /**
+     * @var string
+     */
     private $locale;
 
     /**
      * @var ContainerInterface to prevent ServiceCircularReferenceException
-     * @var bool               $kernelDebug
-     * @var string             $locale
+     * @var bool
+     * @var string
      */
     public function __construct(ContainerInterface $container, $kernelDebug, $locale)
     {
@@ -52,7 +58,7 @@ class DesignConfigPass implements ConfigPassInterface
     {
         if (!isset($backendConfig['design']['rtl'])) {
             // ar = Arabic, fa = Persian, he = Hebrew
-            if (in_array(substr($this->locale, 0, 2), array('ar', 'fa', 'he'))) {
+            if (in_array(substr($this->locale, 0, 2), ['ar', 'fa', 'he'])) {
                 $backendConfig['design']['rtl'] = true;
             } else {
                 $backendConfig['design']['rtl'] = false;
@@ -64,17 +70,15 @@ class DesignConfigPass implements ConfigPassInterface
 
     private function processCustomCss(array $backendConfig)
     {
-        $customCssContent = $this->container->get('twig')->render('@EasyAdmin/css/easyadmin.css.twig', array(
+        $customCssContent = $this->container->get('twig')->render('@EasyAdmin/css/easyadmin.css.twig', [
             'brand_color' => $backendConfig['design']['brand_color'],
             'color_scheme' => $backendConfig['design']['color_scheme'],
             'kernel_debug' => $this->kernelDebug,
-        ));
+        ]);
 
-        $minifiedCss = preg_replace(array('/\n/', '/\s{2,}/'), ' ', $customCssContent);
+        $minifiedCss = preg_replace(['/\n/', '/\s{2,}/'], ' ', $customCssContent);
         $backendConfig['_internal']['custom_css'] = $minifiedCss;
 
         return $backendConfig;
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Configuration\DesignConfigPass', 'JavierEguiluz\Bundle\EasyAdminBundle\Configuration\DesignConfigPass', false);

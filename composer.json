@@ -12,66 +12,54 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
-        "doctrine/cache": "~1.5",
+        "php": ">=7.4.0",
         "doctrine/dbal": "~2.3",
-        "doctrine/doctrine-bundle": "~1.2",
-        "doctrine/orm": "~2.3",
+        "doctrine/doctrine-bundle": "~2.4",
+        "doctrine/orm": "~2.7",
         "pagerfanta/pagerfanta": "~1.0,>=1.0.1|~2.0",
         "psr/log": "^1.0",
-        "symfony/asset": "~2.3|~3.0|^4.0",
-        "symfony/config": "~2.3|~3.0|^4.0",
-        "symfony/dependency-injection": "~2.3|~3.0|^4.0",
-        "symfony/doctrine-bridge": "~2.3|~3.0|^4.0",
-        "symfony/event-dispatcher": "~2.3|~3.0|^4.0",
-        "symfony/finder": "~2.3|~3.0|^4.0",
-        "symfony/form": "~2.3|~3.0|^4.0",
-        "symfony/framework-bundle": "~2.3|~3.0|^4.0",
-        "symfony/http-foundation": "~2.3|~3.0|^4.0",
-        "symfony/http-kernel": "~2.3|~3.0|^4.0",
+        "symfony/asset": "^4.0|^5.0",
+        "symfony/config": "^4.0|^5.0",
+        "symfony/dependency-injection": "^4.0|^5.0",
+        "symfony/doctrine-bridge": "^4.0|^5.0",
+        "symfony/event-dispatcher": "^4.0|^5.0",
+        "symfony/finder": "^4.0|^5.0",
+        "symfony/form": "^4.0|^5.0",
+        "symfony/framework-bundle": "^4.0|^5.0",
+        "symfony/http-foundation": "^4.0|^5.0",
+        "symfony/http-kernel": "^4.0|^5.0",
         "symfony/polyfill-mbstring": "^1.0",
-        "symfony/property-access": "~2.3|~3.0|^4.0",
-        "symfony/routing": "~2.3|~3.0|^4.0",
-        "symfony/security-bundle": "~2.3|~3.0|^4.0",
-        "symfony/translation": "~2.3|~3.0|^4.0",
-        "symfony/twig-bridge": "^2.3.4|~3.0|^4.0",
-        "symfony/twig-bundle": "~2.3|~3.0|^4.0",
-        "symfony/validator": "~2.3|~3.0|^4.0",
-        "twig/extensions": "~1.0",
-        "twig/twig": "~1.42|~2.11"
+        "symfony/property-access": "^4.0|^5.0",
+        "symfony/routing": "^4.0|^5.0",
+        "symfony/security-bundle": "^4.0|^5.0",
+        "symfony/translation": "^4.0|^5.0",
+        "symfony/twig-bridge": "^4.0|^5.0",
+        "symfony/twig-bundle": "^4.0|^5.0",
+        "symfony/validator": "^4.0|^5.0",
+        "twig/twig": "^2.10|~3.3"
     },
     "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "~2.2",
-        "psr/log": "~1.0",
-        "symfony/browser-kit": "~2.3|~3.0|^4.0",
-        "symfony/console": "~2.3|~3.0|^4.0",
-        "symfony/css-selector": "~2.3|~3.0|^4.0",
-        "symfony/dom-crawler": "~2.3|~3.0|^4.0",
-        "symfony/phpunit-bridge": "^3.2|^4.0",
-        "symfony/var-dumper": "~2.3|~3.0|^4.0",
-        "symfony/yaml": "~2.3|~3.0|^4.0"
-    },
-    "conflict": {
-        "symfony/http-kernel": ">=5.0"
+        "doctrine/doctrine-fixtures-bundle": "~3.4",
+        "symfony/browser-kit": "^4.0|^5.0",
+        "symfony/console": "^4.0|^5.0",
+        "symfony/css-selector": "^4.0|^5.0",
+        "symfony/dom-crawler": "^4.0|^5.0",
+        "symfony/phpunit-bridge": "^3.2|^4.0|^5.0",
+        "symfony/var-dumper": "^4.0|^5.0",
+        "symfony/yaml": "^4.0|^5.0"
     },
     "config": {
         "sort-packages": true
     },
     "autoload": {
         "psr-4": {
-            "EasyCorp\\Bundle\\EasyAdminBundle\\": "src/",
-            "JavierEguiluz\\Bundle\\EasyAdminBundle\\": "legacy/"
+            "EasyCorp\\Bundle\\EasyAdminBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "AppTestBundle\\": "tests/Fixtures/AppTestBundle/",
             "EasyCorp\\Bundle\\EasyAdminBundle\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.17.x-dev"
         }
     }
 }

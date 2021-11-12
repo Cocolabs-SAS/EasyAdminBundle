@@ -16,7 +16,7 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Exception;
  */
 class EntityNotFoundException extends BaseException
 {
-    public function __construct(array $parameters = array())
+    public function __construct(array $parameters = [])
     {
         $exceptionContext = new ExceptionContext(
             'exception.entity_not_found',
@@ -28,5 +28,3 @@ class EntityNotFoundException extends BaseException
         parent::__construct($exceptionContext);
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Exception\EntityNotFoundException', 'JavierEguiluz\Bundle\EasyAdminBundle\Exception\EntityNotFoundException', false);

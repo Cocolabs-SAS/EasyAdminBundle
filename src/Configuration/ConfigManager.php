@@ -13,6 +13,8 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Configuration;
 
 use EasyCorp\Bundle\EasyAdminBundle\Cache\CacheManager;
 use EasyCorp\Bundle\EasyAdminBundle\Exception\UndefinedEntityException;
+use Exception;
+use InvalidArgumentException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
@@ -24,17 +26,29 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  */
 class ConfigManager
 {
-    /** @var array */
+    /**
+     * @var array
+     */
     private $backendConfig;
-    /** @var CacheManager */
+    /**
+     * @var CacheManager
+     */
     private $cacheManager;
-    /** @var PropertyAccessorInterface */
+    /**
+     * @var PropertyAccessorInterface
+     */
     private $propertyAccessor;
-    /** @var array */
+    /**
+     * @var array
+     */
     private $originalBackendConfig;
-    /** @var ConfigPassInterface[] */
+    /**
+     * @var ConfigPassInterface[]
+     */
     private $configPasses;
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $debug;
 
     public function __construct(CacheManager $cacheManager, PropertyAccessorInterface $propertyAccessor, array $originalBackendConfig, $debug)
@@ -45,9 +59,6 @@ class ConfigManager
         $this->debug = $debug;
     }
 
-    /**
-     * @param ConfigPassInterface $configPass
-     */
     public function addConfigPass(ConfigPassInterface $configPass)
     {
         $this->configPasses[] = $configPass;
@@ -86,7 +97,7 @@ class ConfigManager
      *
      * @return array The full entity configuration
      *
-     * @throws \InvalidArgumentException when the entity isn't managed by EasyAdmin
+     * @throws InvalidArgumentException when the entity isn't managed by EasyAdmin
      */
     public function getEntityConfiguration($entityName)
     {
@@ -100,13 +111,13 @@ class ConfigManager
      *
      * @return array The full entity configuration
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getEntityConfig($entityName)
     {
         $backendConfig = $this->getBackendConfig();
         if (!isset($backendConfig['entities'][$entityName])) {
-            throw new UndefinedEntityException(array('entity_name' => $entityName));
+            throw new UndefinedEntityException(['entity_name' => $entityName]);
         }
 
         return $backendConfig['entities'][$entityName];
@@ -142,11 +153,11 @@ class ConfigManager
     {
         try {
             $entityConfig = $this->getEntityConfig($entityName);
-        } catch (\Exception $e) {
-            $entityConfig = array();
+        } catch (Exception $e) {
+            $entityConfig = [];
         }
 
-        return isset($entityConfig[$view]['actions'][$action]) ? $entityConfig[$view]['actions'][$action] : array();
+        return isset($entityConfig[$view]['actions'][$action]) ? $entityConfig[$view]['actions'][$action] : [];
     }
 
     /**
@@ -207,5 +218,3 @@ class ConfigManager
         return $backendConfig;
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Configuration\ConfigManager', 'JavierEguiluz\Bundle\EasyAdminBundle\Configuration\ConfigManager', false);

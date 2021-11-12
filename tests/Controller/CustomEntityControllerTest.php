@@ -15,23 +15,23 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
 
 class CustomEntityControllerTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->initClient(array('environment' => 'custom_entity_controller'));
+        $this->initClient(['environment' => 'custom_entity_controller']);
     }
 
     public function testListAction()
     {
         $this->requestListView();
-        $this->assertContains('Overridden list action.', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Overridden list action.', $this->client->getResponse()->getContent());
     }
 
     public function testShowAction()
     {
         $this->requestShowView();
-        $this->assertContains('Overridden show action.', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Overridden show action.', $this->client->getResponse()->getContent());
     }
 
     /**
@@ -44,9 +44,9 @@ class CustomEntityControllerTest extends AbstractTestCase
         $this->client->followRedirects();
 
         $categoryName = sprintf('The New Category %s', md5(mt_rand()));
-        $form = $crawler->selectButton('Save changes')->form(array(
+        $form = $crawler->selectButton('Save changes')->form([
             'category[name]' => $categoryName,
-        ));
+        ]);
         $this->client->submit($form);
     }
 
@@ -60,9 +60,9 @@ class CustomEntityControllerTest extends AbstractTestCase
         $this->client->followRedirects();
 
         $categoryName = sprintf('Modified Category %s', md5(mt_rand()));
-        $form = $crawler->selectButton('Save changes')->form(array(
+        $form = $crawler->selectButton('Save changes')->form([
             'category[name]' => $categoryName,
-        ));
+        ]);
         $this->client->submit($form);
     }
 
@@ -87,9 +87,9 @@ class CustomEntityControllerTest extends AbstractTestCase
         $this->client->followRedirects();
 
         $categoryName = sprintf('The New Category %s', md5(mt_rand()));
-        $form = $crawler->selectButton('Save changes')->form(array(
+        $form = $crawler->selectButton('Save changes')->form([
             'category2[name]' => $categoryName,
-        ));
+        ]);
         $this->client->submit($form);
     }
 
@@ -103,9 +103,9 @@ class CustomEntityControllerTest extends AbstractTestCase
         $this->client->followRedirects();
 
         $categoryName = sprintf('Modified Category %s', md5(mt_rand()));
-        $form = $crawler->selectButton('Save changes')->form(array(
+        $form = $crawler->selectButton('Save changes')->form([
             'category2[name]' => $categoryName,
-        ));
+        ]);
         $this->client->submit($form);
     }
 

@@ -15,11 +15,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
 
 class RtlTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->initClient(array('environment' => 'rtl'));
+        $this->initClient(['environment' => 'rtl']);
     }
 
     public function testRtlAutodetection()

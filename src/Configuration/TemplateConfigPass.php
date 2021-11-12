@@ -11,7 +11,10 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Configuration;
 
+use LogicException;
+use RuntimeException;
 use Symfony\Component\Finder\Finder;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * Processes the template configuration to decide which template to use to
@@ -23,7 +26,7 @@ use Symfony\Component\Finder\Finder;
 class TemplateConfigPass implements ConfigPassInterface
 {
     private $twigLoader;
-    private $defaultBackendTemplates = array(
+    private $defaultBackendTemplates = [
         'layout' => '@EasyAdmin/default/layout.html.twig',
         'menu' => '@EasyAdmin/default/menu.html.twig',
         'edit' => '@EasyAdmin/default/edit.html.twig',
@@ -66,10 +69,10 @@ class TemplateConfigPass implements ConfigPassInterface
         'label_inaccessible' => '@EasyAdmin/default/label_inaccessible.html.twig',
         'label_null' => '@EasyAdmin/default/label_null.html.twig',
         'label_undefined' => '@EasyAdmin/default/label_undefined.html.twig',
-    );
-    private $existingTemplates = array();
+    ];
+    private $existingTemplates = [];
 
-    public function __construct(\Twig_Loader_Filesystem $twigLoader)
+    public function __construct(FilesystemLoader $twigLoader)
     {
         $this->twigLoader = $twigLoader;
     }
@@ -80,7 +83,7 @@ class TemplateConfigPass implements ConfigPassInterface
         $backendConfig = $this->processDefaultTemplates($backendConfig);
         $backendConfig = $this->processFieldTemplates($backendConfig);
 
-        $this->existingTemplates = array();
+        $this->existingTemplates = [];
 
         return $backendConfig;
     }
@@ -89,8 +92,6 @@ class TemplateConfigPass implements ConfigPassInterface
      * Determines the template used to render each backend element. This is not
      * trivial because templates can depend on the entity displayed and they
      * define an advanced override mechanism.
-     *
-     * @param array $backendConfig
      *
      * @return array
      */
@@ -104,16 +105,16 @@ class TemplateConfigPass implements ConfigPassInterface
         // 5th level priority: @EasyAdmin/default/<templateName>.html.twig
         foreach ($backendConfig['entities'] as $entityName => $entityConfig) {
             foreach ($this->defaultBackendTemplates as $templateName => $defaultTemplatePath) {
-                $candidateTemplates = array(
+                $candidateTemplates = [
                     isset($entityConfig['templates'][$templateName]) ? $entityConfig['templates'][$templateName] : null,
                     isset($backendConfig['design']['templates'][$templateName]) ? $backendConfig['design']['templates'][$templateName] : null,
                     'easy_admin/'.$entityName.'/'.$templateName.'.html.twig',
                     'easy_admin/'.$templateName.'.html.twig',
-                );
+                ];
                 $templatePath = $this->findFirstExistingTemplate($candidateTemplates) ?: $defaultTemplatePath;
 
                 if (null === $templatePath) {
-                    throw new \RuntimeException(sprintf('None of the templates defined for the "%s" fragment of the "%s" entity exists (templates defined: %s).', $templateName, $entityName, implode(', ', $candidateTemplates)));
+                    throw new RuntimeException(sprintf('None of the templates defined for the "%s" fragment of the "%s" entity exists (templates defined: %s).', $templateName, $entityName, implode(', ', $candidateTemplates)));
                 }
 
                 $entityConfig['templates'][$templateName] = $templatePath;
@@ -124,7 +125,7 @@ class TemplateConfigPass implements ConfigPassInterface
 
         // second, walk through all entity fields to determine their specific template
         foreach ($backendConfig['entities'] as $entityName => $entityConfig) {
-            foreach (array('list', 'show') as $view) {
+            foreach (['list', 'show'] as $view) {
                 foreach ($entityConfig[$view]['fields'] as $fieldName => $fieldMetadata) {
                     // if the field defines its own template, resolve its location
                     if (isset($fieldMetadata['template'])) {
@@ -141,11 +142,11 @@ class TemplateConfigPass implements ConfigPassInterface
                         // path, check if the given template exists in any of these directories:
                         // * app/Resources/views/easy_admin/<entityName>/<templatePath>
                         // * app/Resources/views/easy_admin/<templatePath>
-                        $templatePath = $this->findFirstExistingTemplate(array(
+                        $templatePath = $this->findFirstExistingTemplate([
                             'easy_admin/'.$entityName.'/'.$templatePath,
                             'easy_admin/'.$templatePath,
                             $templatePath,
-                        ), true);
+                        ], true);
                     } else {
                         // At this point, we don't know the exact data type associated with each field.
                         // The template is initialized to null and it will be resolved at runtime in the Configurator class
@@ -169,8 +170,6 @@ class TemplateConfigPass implements ConfigPassInterface
      * This is needed for example when an exception is triggered and no entity
      * configuration is available to know which template should be rendered.
      *
-     * @param array $backendConfig
-     *
      * @return array
      */
     private function processDefaultTemplates(array $backendConfig)
@@ -179,14 +178,14 @@ class TemplateConfigPass implements ConfigPassInterface
         // 2nd level priority: app/Resources/views/easy_admin/<templateName>.html.twig
         // 3rd level priority: @EasyAdmin/default/<templateName>.html.twig
         foreach ($this->defaultBackendTemplates as $templateName => $defaultTemplatePath) {
-            $candidateTemplates = array(
+            $candidateTemplates = [
                 isset($backendConfig['design']['templates'][$templateName]) ? $backendConfig['design']['templates'][$templateName] : null,
                 'easy_admin/'.$templateName.'.html.twig',
-            );
+            ];
             $templatePath = $this->findFirstExistingTemplate($candidateTemplates) ?: $defaultTemplatePath;
 
             if (null === $templatePath) {
-                throw new \RuntimeException(sprintf('None of the templates defined for the global "%s" template of the backend exists (templates defined: %s).', $templateName, implode(', ', $candidateTemplates)));
+                throw new RuntimeException(sprintf('None of the templates defined for the global "%s" template of the backend exists (templates defined: %s).', $templateName, implode(', ', $candidateTemplates)));
             }
 
             $backendConfig['design']['templates'][$templateName] = $templatePath;
@@ -200,14 +199,12 @@ class TemplateConfigPass implements ConfigPassInterface
      * trivial because templates can depend on the entity displayed and they
      * define an advanced override mechanism.
      *
-     * @param array $backendConfig
-     *
      * @return array
      */
     private function processFieldTemplates(array $backendConfig)
     {
         foreach ($backendConfig['entities'] as $entityName => $entityConfig) {
-            foreach (array('list', 'show') as $view) {
+            foreach (['list', 'show'] as $view) {
                 foreach ($entityConfig[$view]['fields'] as $fieldName => $fieldMetadata) {
                     if (null !== $fieldMetadata['template']) {
                         continue;
@@ -244,13 +241,13 @@ class TemplateConfigPass implements ConfigPassInterface
     private function findFirstExistingTemplate(array $templatePaths, $isFieldTemplateFragment = false)
     {
         foreach ($templatePaths as $templatePath) {
-            // template name normalization code taken from \Twig_Loader_Filesystem::normalizeName()
+            // template name normalization code taken from FilesystemLoader::normalizeName()
             $templatePath = preg_replace('#/{2,}#', '/', str_replace('\\', '/', $templatePath));
-            $namespace = \Twig_Loader_Filesystem::MAIN_NAMESPACE;
+            $namespace = FilesystemLoader::MAIN_NAMESPACE;
 
             if (isset($templatePath[0]) && '@' === $templatePath[0]) {
                 if (false === $pos = strpos($templatePath, '/')) {
-                    throw new \LogicException(sprintf('Malformed namespaced template name "%s" (expecting "@namespace/template_name").', $templatePath));
+                    throw new LogicException(sprintf('Malformed namespaced template name "%s" (expecting "@namespace/template_name").', $templatePath));
                 }
 
                 $namespace = substr($templatePath, 1, $pos - 1);
@@ -268,7 +265,7 @@ class TemplateConfigPass implements ConfigPassInterface
                             $template = str_replace('\\', '/', $template);
                         }
 
-                        if (\Twig_Loader_Filesystem::MAIN_NAMESPACE !== $namespace) {
+                        if (FilesystemLoader::MAIN_NAMESPACE !== $namespace) {
                             $template = sprintf('@%s/%s', $namespace, $template);
                         }
                         $this->existingTemplates[$namespace][$template] = true;
@@ -291,5 +288,3 @@ class TemplateConfigPass implements ConfigPassInterface
         }
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Configuration\TemplateConfigPass', 'JavierEguiluz\Bundle\EasyAdminBundle\Configuration\TemplateConfigPass', false);

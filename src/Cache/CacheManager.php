@@ -11,22 +11,20 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Cache;
 
-use Doctrine\Common\Cache\FilesystemCache;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\CacheItem;
 
 /**
  * It provides a file system based cache exposing methods with the same names
- * as in the PSR-6 Cache standard. This will simplify the eventual replacement
- * of Doctrine Cache by Symfony Cache.
+ * as in the PSR-6 Cache standard.
  */
-class CacheManager extends FilesystemCache
+class CacheManager
 {
+    private FilesystemAdapter $cache;
+
     public function __construct($cacheDir)
     {
-        if (isset($_SERVER['APP_ENV']) && 'dev' === $_SERVER['APP_ENV']) {
-            parent::__construct($cacheDir, self::EXTENSION, 0000);
-        } else {
-            parent::__construct($cacheDir);
-        }
+        $this->cache = new FilesystemAdapter('', 0, $cacheDir);
     }
 
     /**
@@ -36,7 +34,7 @@ class CacheManager extends FilesystemCache
      */
     public function getItem($key)
     {
-        return parent::fetch($key);
+        return $this->cache->getItem($key)->get();
     }
 
     /**
@@ -46,7 +44,7 @@ class CacheManager extends FilesystemCache
      */
     public function hasItem($key)
     {
-        return parent::contains($key);
+        return $this->cache->hasItem($key);
     }
 
     /**
@@ -58,8 +56,11 @@ class CacheManager extends FilesystemCache
      */
     public function save($key, $item, $lifetime = 0)
     {
-        return parent::save($key, $item, $lifetime);
+        /** @var CacheItem $cacheItem */
+        $cacheItem = $this->cache->getItem($key);
+        $cacheItem->set($item);
+        $cacheItem->expiresAfter($lifetime);
+
+        return $this->cache->save($cacheItem);
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Cache\CacheManager', 'JavierEguiluz\Bundle\EasyAdminBundle\Cache\CacheManager', false);

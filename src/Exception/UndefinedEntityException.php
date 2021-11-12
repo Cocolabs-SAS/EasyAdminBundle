@@ -16,7 +16,7 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Exception;
  */
 class UndefinedEntityException extends BaseException
 {
-    public function __construct(array $parameters = array())
+    public function __construct(array $parameters = [])
     {
         $exceptionContext = new ExceptionContext(
             'exception.undefined_entity',
@@ -28,5 +28,3 @@ class UndefinedEntityException extends BaseException
         parent::__construct($exceptionContext);
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Exception\UndefinedEntityException', 'JavierEguiluz\Bundle\EasyAdminBundle\Exception\UndefinedEntityException', false);

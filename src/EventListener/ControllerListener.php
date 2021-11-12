@@ -13,7 +13,7 @@ namespace EasyCorp\Bundle\EasyAdminBundle\EventListener;
 
 use EasyCorp\Bundle\EasyAdminBundle\Configuration\ConfigManager;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -24,9 +24,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class ControllerListener
 {
-    /** @var ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     private $configManager;
-    /** @var ControllerResolverInterface */
+    /**
+     * @var ControllerResolverInterface
+     */
     private $resolver;
 
     public function __construct(ConfigManager $configManager, ControllerResolverInterface $resolver)
@@ -37,10 +41,8 @@ class ControllerListener
 
     /**
      * Exchange default admin controller by custom entity admin controller.
-     *
-     * @param FilterControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         $request = $event->getRequest();
         if ('easyadmin' !== $request->attributes->get('_route')) {
@@ -89,5 +91,3 @@ class ControllerListener
         $event->setController($newController);
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\EventListener\ControllerListener', 'JavierEguiluz\Bundle\EasyAdminBundle\EventListener\ControllerListener', false);

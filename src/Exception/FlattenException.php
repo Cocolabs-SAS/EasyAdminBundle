@@ -11,27 +11,24 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Exception;
 
-use Symfony\Component\Debug\Exception\FlattenException as BaseFlattenException;
+use Exception;
+use RuntimeException;
+use Symfony\Component\ErrorHandler\Exception\FlattenException as BaseFlattenException;
 
 /**
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
 class FlattenException extends BaseFlattenException
 {
-    /** @var ExceptionContext */
+    /**
+     * @var ExceptionContext
+     */
     private $context;
 
-    /**
-     * @param \Exception $exception
-     * @param int        $statusCode
-     * @param array      $headers
-     *
-     * @return FlattenException
-     */
-    public static function create(\Exception $exception, $statusCode = null, array $headers = array())
+    public static function create(Exception $exception, $statusCode = null, array $headers = []): BaseFlattenException
     {
         if (!$exception instanceof BaseException) {
-            throw new \RuntimeException(sprintf('You should only try to create an instance of "%s" with a "EasyCorp\Bundle\EasyAdminBundle\Exception\BaseException" instance, or subclass. "%s" given.', __CLASS__, get_class($exception)));
+            throw new RuntimeException(sprintf('You should only try to create an instance of "%s" with a "EasyCorp\Bundle\EasyAdminBundle\Exception\BaseException" instance, or subclass. "%s" given.', __CLASS__, get_class($exception)));
         }
 
         /** @var FlattenException $e */
@@ -61,10 +58,8 @@ class FlattenException extends BaseFlattenException
         return $this->context->getTranslationParameters();
     }
 
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->context->getStatusCode();
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Exception\FlattenException', 'JavierEguiluz\Bundle\EasyAdminBundle\Exception\FlattenException', false);

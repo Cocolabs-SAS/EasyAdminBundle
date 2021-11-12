@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class EasyAdminBundle extends Bundle
 {
-    const VERSION = '1.17.25';
+    public const VERSION = '1.17.25';
 
     public function build(ContainerBuilder $container)
     {
@@ -30,5 +30,3 @@ class EasyAdminBundle extends Bundle
         $container->addCompilerPass(new EasyAdminConfigPass());
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle', 'JavierEguiluz\Bundle\EasyAdminBundle\EasyAdminBundle', false);

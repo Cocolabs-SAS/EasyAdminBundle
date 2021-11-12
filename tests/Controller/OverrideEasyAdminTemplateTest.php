@@ -15,11 +15,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
 
 class OverrideEasyAdminTemplateTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->initClient(array('environment' => 'override_templates'));
+        $this->initClient(['environment' => 'override_templates']);
     }
 
     public function testLayoutIsOverridden()

@@ -15,19 +15,25 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController as EasyAdminContr
 
 class CustomController extends EasyAdminController
 {
-    /** Empty method defined to trigger a deprecation message */
+    /**
+     * Empty method defined to trigger a deprecation message
+     */
     public function prePersistCategory2Entity($entity)
     {
         parent::prePersistEntity($entity);
     }
 
-    /** Empty method defined to trigger a deprecation message */
+    /**
+     * Empty method defined to trigger a deprecation message
+     */
     public function preUpdateCategory2Entity($entity)
     {
         parent::preUpdateEntity($entity);
     }
 
-    /** Empty method defined to trigger a deprecation message */
+    /**
+     * Empty method defined to trigger a deprecation message
+     */
     public function preRemoveCategory2Entity($entity)
     {
         parent::preUpdateEntity($entity);

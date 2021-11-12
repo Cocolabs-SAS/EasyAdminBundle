@@ -24,11 +24,7 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Configuration;
 interface ConfigPassInterface
 {
     /**
-     * @param array $backendConfig
-     *
      * @return array
      */
     public function process(array $backendConfig);
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Configuration\ConfigPassInterface', 'JavierEguiluz\Bundle\EasyAdminBundle\Configuration\ConfigPassInterface', false);

@@ -21,7 +21,9 @@ use Doctrine\ORM\QueryBuilder as DoctrineQueryBuilder;
  */
 class QueryBuilder
 {
-    /** @var Registry */
+    /**
+     * @var Registry
+     */
     private $doctrine;
 
     public function __construct(Registry $doctrine)
@@ -33,7 +35,6 @@ class QueryBuilder
      * Creates the query builder used to get all the records displayed by the
      * "list" view.
      *
-     * @param array       $entityConfig
      * @param string|null $sortField
      * @param string|null $sortDirection
      * @param string|null $dqlFilter
@@ -73,7 +74,6 @@ class QueryBuilder
      * Creates the query builder used to get the results of the search query
      * performed by the user in the "search" view.
      *
-     * @param array       $entityConfig
      * @param string      $searchQuery
      * @param string|null $sortField
      * @param string|null $sortDirection
@@ -99,8 +99,8 @@ class QueryBuilder
         $isSearchQueryUuid = 1 === preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $searchQuery);
         $lowerSearchQuery = mb_strtolower($searchQuery);
 
-        $queryParameters = array();
-        $entitiesAlreadyJoined = array();
+        $queryParameters = [];
+        $entitiesAlreadyJoined = [];
         foreach ($entityConfig['search']['fields'] as $fieldName => $metadata) {
             $entityName = 'entity';
             if ($this->isDoctrineAssociation($classMetadata, $fieldName)) {
@@ -123,8 +123,8 @@ class QueryBuilder
 
             $isSmallIntegerField = 'smallint' === $metadata['dataType'];
             $isIntegerField = 'integer' === $metadata['dataType'];
-            $isNumericField = in_array($metadata['dataType'], array('number', 'bigint', 'decimal', 'float'));
-            $isTextField = in_array($metadata['dataType'], array('string', 'text', 'array', 'simple_array'));
+            $isNumericField = in_array($metadata['dataType'], ['number', 'bigint', 'decimal', 'float']);
+            $isTextField = in_array($metadata['dataType'], ['string', 'text', 'array', 'simple_array']);
             $isGuidField = 'guid' === $metadata['dataType'];
 
             // this complex condition is needed to avoid issues on PostgreSQL databases
@@ -158,7 +158,7 @@ class QueryBuilder
 
         $isSortedByDoctrineAssociation = $this->isDoctrineAssociation($classMetadata, $sortField);
         if ($isSortedByDoctrineAssociation) {
-            list($associatedEntityName, $associatedFieldName) = explode('.', $sortField);
+            [$associatedEntityName, $associatedFieldName] = explode('.', $sortField);
             if (!in_array($associatedEntityName, $entitiesAlreadyJoined)) {
                 $queryBuilder->leftJoin('entity.'.$associatedEntityName, $associatedEntityName);
                 $entitiesAlreadyJoined[] = $associatedEntityName;
@@ -177,8 +177,7 @@ class QueryBuilder
      * Doctrine association. This also happens when using embedded classes, so the
      * embeddedClasses property from Doctrine class metadata must be checked too.
      *
-     * @param ClassMetadata $classMetadata
-     * @param string|null   $fieldName
+     * @param string|null $fieldName
      *
      * @return bool
      */
@@ -193,5 +192,3 @@ class QueryBuilder
         return false !== strpos($fieldName, '.') && !array_key_exists($fieldNameParts[0], $classMetadata->embeddedClasses);
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Search\QueryBuilder', 'JavierEguiluz\Bundle\EasyAdminBundle\Search\QueryBuilder', false);

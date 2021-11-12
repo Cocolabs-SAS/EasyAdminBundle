@@ -17,10 +17,10 @@ class EmptyBackendTest extends AbstractTestCase
 {
     public function testNoEntityHasBeenConfigured()
     {
-        $this->initClient(array('environment' => 'empty_backend'));
+        $this->initClient(['environment' => 'empty_backend']);
         $this->client->request('GET', '/admin/');
 
         $this->assertSame(500, $this->client->getResponse()->getStatusCode());
-        $this->assertContains('NoEntitiesConfiguredException', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('NoEntitiesConfiguredException', $this->client->getResponse()->getContent());
     }
 }

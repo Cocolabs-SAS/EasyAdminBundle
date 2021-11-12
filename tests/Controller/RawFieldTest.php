@@ -15,24 +15,24 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
 
 class RawFieldTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->initClient(array('environment' => 'raw_field'));
+        $this->initClient(['environment' => 'raw_field']);
     }
 
     public function testListViewRawField()
     {
         $crawler = $this->requestListView('Product');
 
-        $this->assertRegExp('/\s*<ul>\s*(<li>.*<\/li>\s*){2}\s*<\/ul>/', $crawler->filter('#main table td[data-label="Html features"]')->eq(0)->html());
+        $this->assertMatchesRegularExpression('/\s*<ul>\s*(<li>.*<\/li>\s*){2}\s*<\/ul>/', $crawler->filter('#main table td[data-label="Html features"]')->eq(0)->html());
     }
 
     public function testShowViewRawField()
     {
         $crawler = $this->requestShowView('Product', 50);
 
-        $this->assertRegExp('/\s*<ul>\s*(<li>.*<\/li>\s*){2}\s*<\/ul>/', $crawler->filter('#main .form-control')->eq(0)->html());
+        $this->assertMatchesRegularExpression('/\s*<ul>\s*(<li>.*<\/li>\s*){2}\s*<\/ul>/', $crawler->filter('#main .form-control')->eq(0)->html());
     }
 }

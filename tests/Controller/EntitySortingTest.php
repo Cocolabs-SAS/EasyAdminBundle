@@ -15,30 +15,30 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
 
 class EntitySortingTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         // parent::setUp();
 
-        $this->initClient(array('environment' => 'entity_sorting'));
+        $this->initClient(['environment' => 'entity_sorting']);
     }
 
     public function testMainMenuSorting()
     {
         $crawler = $this->requestListView('Product');
 
-        $this->assertContains('sortField=price', $crawler->filter('.sidebar-menu a:contains("Product 1")')->attr('href'));
-        $this->assertNotContains('sortDirection', $crawler->filter('.sidebar-menu a:contains("Product 1")')->attr('href'));
-        $this->assertContains('sortField=price', $crawler->filter('.sidebar-menu a:contains("Product 2")')->attr('href'));
-        $this->assertContains('sortDirection=ASC', $crawler->filter('.sidebar-menu a:contains("Product 2")')->attr('href'));
-        $this->assertContains('sortField=id', $crawler->filter('.sidebar-menu a:contains("Product 3")')->attr('href'));
-        $this->assertNotContains('sortDirection', $crawler->filter('.sidebar-menu a:contains("Product 3")')->attr('href'));
+        $this->assertStringContainsString('sortField=price', $crawler->filter('.sidebar-menu a:contains("Product 1")')->attr('href'));
+        $this->assertStringNotContainsString('sortDirection', $crawler->filter('.sidebar-menu a:contains("Product 1")')->attr('href'));
+        $this->assertStringContainsString('sortField=price', $crawler->filter('.sidebar-menu a:contains("Product 2")')->attr('href'));
+        $this->assertStringContainsString('sortDirection=ASC', $crawler->filter('.sidebar-menu a:contains("Product 2")')->attr('href'));
+        $this->assertStringContainsString('sortField=id', $crawler->filter('.sidebar-menu a:contains("Product 3")')->attr('href'));
+        $this->assertStringNotContainsString('sortDirection', $crawler->filter('.sidebar-menu a:contains("Product 3")')->attr('href'));
 
         // click on any menu item to sort contents differently
         $link = $crawler->filter('.sidebar-menu a:contains("Product 2")')->link();
         $crawler = $this->client->click($link);
-        $this->assertNotContains('sorted', $crawler->filter('th[data-property-name="name"]')->attr('class'));
-        $this->assertContains('sorted', $crawler->filter('th[data-property-name="price"]')->attr('class'));
-        $this->assertContains('fa-caret-up', $crawler->filter('th[data-property-name="price"] i')->attr('class'));
+        $this->assertStringNotContainsString('sorted', $crawler->filter('th[data-property-name="name"]')->attr('class'));
+        $this->assertStringContainsString('sorted', $crawler->filter('th[data-property-name="price"]')->attr('class'));
+        $this->assertStringContainsString('fa-caret-up', $crawler->filter('th[data-property-name="price"] i')->attr('class'));
     }
 
     public function testListViewSorting()
@@ -46,15 +46,15 @@ class EntitySortingTest extends AbstractTestCase
         $crawler = $this->requestListView('Product');
 
         // check the default sorting of the page
-        $this->assertContains('sorted', $crawler->filter('th[data-property-name="name"]')->attr('class'));
-        $this->assertContains('fa-caret-down', $crawler->filter('th[data-property-name="name"] i')->attr('class'));
+        $this->assertStringContainsString('sorted', $crawler->filter('th[data-property-name="name"]')->attr('class'));
+        $this->assertStringContainsString('fa-caret-down', $crawler->filter('th[data-property-name="name"] i')->attr('class'));
 
         // click on any other table column to sort contents differently
         $link = $crawler->filter('th[data-property-name="price"] a')->link();
         $crawler = $this->client->click($link);
-        $this->assertNotContains('sorted', $crawler->filter('th[data-property-name="name"]')->attr('class'));
-        $this->assertContains('sorted', $crawler->filter('th[data-property-name="price"]')->attr('class'));
-        $this->assertContains('fa-caret-down', $crawler->filter('th[data-property-name="price"] i')->attr('class'));
+        $this->assertStringNotContainsString('sorted', $crawler->filter('th[data-property-name="name"]')->attr('class'));
+        $this->assertStringContainsString('sorted', $crawler->filter('th[data-property-name="price"]')->attr('class'));
+        $this->assertStringContainsString('fa-caret-down', $crawler->filter('th[data-property-name="price"] i')->attr('class'));
     }
 
     public function testSearchViewSorting()
@@ -62,14 +62,14 @@ class EntitySortingTest extends AbstractTestCase
         $crawler = $this->requestSearchView('lorem', 'Product');
 
         // check the default sorting of the page
-        $this->assertContains('sorted', $crawler->filter('th[data-property-name="createdAt"]')->attr('class'));
-        $this->assertContains('fa-caret-up', $crawler->filter('th[data-property-name="createdAt"] i')->attr('class'));
+        $this->assertStringContainsString('sorted', $crawler->filter('th[data-property-name="createdAt"]')->attr('class'));
+        $this->assertStringContainsString('fa-caret-up', $crawler->filter('th[data-property-name="createdAt"] i')->attr('class'));
 
         // click on any other table column to sort contents differently
         $link = $crawler->filter('th[data-property-name="name"] a')->link();
         $crawler = $this->client->click($link);
-        $this->assertNotContains('sorted', $crawler->filter('th[data-property-name="createdAt"]')->attr('class'));
-        $this->assertContains('sorted', $crawler->filter('th[data-property-name="name"]')->attr('class'));
-        $this->assertContains('fa-caret-down', $crawler->filter('th[data-property-name="name"] i')->attr('class'));
+        $this->assertStringNotContainsString('sorted', $crawler->filter('th[data-property-name="createdAt"]')->attr('class'));
+        $this->assertStringContainsString('sorted', $crawler->filter('th[data-property-name="name"]')->attr('class'));
+        $this->assertStringContainsString('fa-caret-down', $crawler->filter('th[data-property-name="name"] i')->attr('class'));
     }
 }

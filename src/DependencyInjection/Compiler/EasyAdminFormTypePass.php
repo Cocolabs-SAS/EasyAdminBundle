@@ -11,6 +11,9 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\DependencyInjection\Compiler;
 
+use InvalidArgumentException;
+use ReflectionClass;
+use SplPriorityQueue;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -41,12 +44,12 @@ class EasyAdminFormTypePass implements CompilerPassInterface
 
     private function registerTypeConfigurators(ContainerBuilder $container)
     {
-        $configurators = new \SplPriorityQueue();
+        $configurators = new SplPriorityQueue();
         foreach ($container->findTaggedServiceIds('easyadmin.form.type.configurator') as $id => $tags) {
-            $configuratorClass = new \ReflectionClass($container->getDefinition($id)->getClass());
+            $configuratorClass = new ReflectionClass($container->getDefinition($id)->getClass());
             $typeConfiguratorInterface = 'EasyCorp\Bundle\EasyAdminBundle\Form\Type\Configurator\TypeConfiguratorInterface';
             if (!$configuratorClass->implementsInterface($typeConfiguratorInterface)) {
-                throw new \InvalidArgumentException(sprintf('Service "%s" must implement interface "%s".', $id, $typeConfiguratorInterface));
+                throw new InvalidArgumentException(sprintf('Service "%s" must implement interface "%s".', $id, $typeConfiguratorInterface));
             }
 
             // Register the Ivory CKEditor type configurator only if the bundle
@@ -70,5 +73,3 @@ class EasyAdminFormTypePass implements CompilerPassInterface
         $container->getDefinition('easyadmin.form.type')->replaceArgument(1, iterator_to_array($configurators));
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\DependencyInjection\Compiler\EasyAdminFormTypePass', 'JavierEguiluz\Bundle\EasyAdminBundle\DependencyInjection\Compiler\EasyAdminFormTypePass', false);

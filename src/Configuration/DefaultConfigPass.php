@@ -11,6 +11,8 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Configuration;
 
+use RuntimeException;
+
 /**
  * Processes default values for some backend configuration options.
  *
@@ -31,8 +33,6 @@ class DefaultConfigPass implements ConfigPassInterface
      * Finds the default entity to display when the backend index is not
      * defined explicitly.
      *
-     * @param array $backendConfig
-     *
      * @return array
      */
     private function processDefaultEntity(array $backendConfig)
@@ -47,8 +47,6 @@ class DefaultConfigPass implements ConfigPassInterface
     /**
      * Finds the default menu item to display when browsing the backend index.
      *
-     * @param array $backendConfig
-     *
      * @return array
      */
     private function processDefaultMenuItem(array $backendConfig)
@@ -56,7 +54,7 @@ class DefaultConfigPass implements ConfigPassInterface
         $defaultMenuItem = $this->findDefaultMenuItem($backendConfig['design']['menu']);
 
         if (is_array($defaultMenuItem) && 'empty' === $defaultMenuItem['type']) {
-            throw new \RuntimeException(sprintf('The "menu" configuration sets "%s" as the default item, which is not possible because its type is "empty" and it cannot redirect to a valid URL.', $defaultMenuItem['label']));
+            throw new RuntimeException(sprintf('The "menu" configuration sets "%s" as the default item, which is not possible because its type is "empty" and it cannot redirect to a valid URL.', $defaultMenuItem['label']));
         }
 
         $backendConfig['default_menu_item'] = $defaultMenuItem;
@@ -68,8 +66,6 @@ class DefaultConfigPass implements ConfigPassInterface
      * Finds the first menu item whose 'default' option is 'true' (if any).
      * It looks for the option both in the first level items and in the
      * submenu items.
-     *
-     * @param array $menuConfig
      *
      * @return mixed
      */
@@ -94,35 +90,33 @@ class DefaultConfigPass implements ConfigPassInterface
      * (Note: we store the route/params instead of generating the URL because
      * the 'router' service cannot be used inside a compiler pass).
      *
-     * @param array $backendConfig
-     *
      * @return array
      */
     private function processDefaultHomepage(array $backendConfig)
     {
-        $backendHomepage = array();
+        $backendHomepage = [];
 
         // if no menu item has been set as "default", use the "list"
         // action of the first configured entity as the backend homepage
         if (null === $menuItemConfig = $backendConfig['default_menu_item']) {
             $defaultEntityName = $backendConfig['default_entity_name'];
             $backendHomepage['route'] = 'easyadmin';
-            $backendHomepage['params'] = array('action' => 'list', 'entity' => $defaultEntityName);
+            $backendHomepage['params'] = ['action' => 'list', 'entity' => $defaultEntityName];
 
             // if the default entity defines a custom sorting, use it
-            $defaultEntityConfig = isset($backendConfig['entities'][$defaultEntityName]) ? $backendConfig['entities'][$defaultEntityName] : array();
+            $defaultEntityConfig = isset($backendConfig['entities'][$defaultEntityName]) ? $backendConfig['entities'][$defaultEntityName] : [];
             if (isset($defaultEntityConfig['list']['sort'])) {
-                $backendHomepage['params'] = array_merge($backendHomepage['params'], array(
+                $backendHomepage['params'] = array_merge($backendHomepage['params'], [
                     'sortField' => $defaultEntityConfig['list']['sort']['field'],
                     'sortDirection' => $defaultEntityConfig['list']['sort']['direction'],
-                ));
+                ]);
             }
         } else {
-            $routeParams = array('menuIndex' => $menuItemConfig['menu_index'], 'submenuIndex' => $menuItemConfig['submenu_index']);
+            $routeParams = ['menuIndex' => $menuItemConfig['menu_index'], 'submenuIndex' => $menuItemConfig['submenu_index']];
 
             if ('entity' === $menuItemConfig['type']) {
                 $backendHomepage['route'] = 'easyadmin';
-                $backendHomepage['params'] = array_merge(array('action' => 'list', 'entity' => $menuItemConfig['entity']), $routeParams, $menuItemConfig['params']);
+                $backendHomepage['params'] = array_merge(['action' => 'list', 'entity' => $menuItemConfig['entity']], $routeParams, $menuItemConfig['params']);
             } elseif ('route' === $menuItemConfig['type']) {
                 $backendHomepage['route'] = $menuItemConfig['route'];
                 $backendHomepage['params'] = array_merge($routeParams, $menuItemConfig['params']);
@@ -136,5 +130,3 @@ class DefaultConfigPass implements ConfigPassInterface
         return $backendConfig;
     }
 }
-
-class_alias('EasyCorp\Bundle\EasyAdminBundle\Configuration\DefaultConfigPass', 'JavierEguiluz\Bundle\EasyAdminBundle\Configuration\DefaultConfigPass', false);

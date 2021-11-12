@@ -15,11 +15,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\Fixtures\AbstractTestCase;
 
 class TypeOptionsTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->initClient(array('environment' => 'type_options'));
+        $this->initClient(['environment' => 'type_options']);
     }
 
     public function testNewViewTypeOptions()
@@ -35,10 +35,10 @@ class TypeOptionsTest extends AbstractTestCase
     {
         $crawler = $this->requestEditView();
 
-        $this->assertContains('col-sm-6', $crawler->filter('#main form label[for=category_name]')->attr('class'));
-        $this->assertContains('col-sm-6', $crawler->filter('#main form input#category_name')->attr('class'));
+        $this->assertStringContainsString('col-sm-6', $crawler->filter('#main form label[for=category_name]')->attr('class'));
+        $this->assertStringContainsString('col-sm-6', $crawler->filter('#main form input#category_name')->attr('class'));
 
-        $this->assertContains('col-sm-4', $crawler->filter('#main form label[for=category_parent]')->attr('class'));
-        $this->assertContains('col-sm-10', $crawler->filter('#main form select#category_parent')->attr('class'));
+        $this->assertStringContainsString('col-sm-4', $crawler->filter('#main form label[for=category_parent]')->attr('class'));
+        $this->assertStringContainsString('col-sm-10', $crawler->filter('#main form select#category_parent')->attr('class'));
     }
 }

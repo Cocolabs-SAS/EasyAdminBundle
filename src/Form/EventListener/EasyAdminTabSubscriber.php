@@ -27,16 +27,14 @@ class EasyAdminTabSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
-            FormEvents::POST_SUBMIT => array('handleViolations', -1),
-        );
+        return [
+            FormEvents::POST_SUBMIT => ['handleViolations', -1],
+        ];
     }
 
     /**
      * Deal with form constraint violations. This method has to be executed with
      * a negative priority to make sure that the validation process is done.
-     *
-     * @param FormEvent $event
      */
     public function handleViolations(FormEvent $event)
     {
